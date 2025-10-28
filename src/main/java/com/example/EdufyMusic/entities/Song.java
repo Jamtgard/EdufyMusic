@@ -70,7 +70,7 @@ public class Song {
             List<Creator> creators,
             List<AlbumTrack> albumTracks,
             Long numberOfStreams,
-            boolean active)
+            boolean active )
     {
         this.title = title;
         this.url = url;
