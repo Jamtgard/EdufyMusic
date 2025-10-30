@@ -11,19 +11,17 @@ import jakarta.persistence.*;
         })
 public class AlbumTrack {
 
-    // TODO - active valid code (remove comment-function)
-
 // Attributes ----------------------------------------------------------------------------------------------------------
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "album_track_id")
     private Long id;
 
-    /*
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "album_id", nullable = false)
     private Album album;
-     */
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "song_id", nullable = false)
@@ -37,21 +35,21 @@ public class AlbumTrack {
     public AlbumTrack() {}
 
     public AlbumTrack(Album album, Song song, Integer trackIndex) {
-        //this.album = album;
+        this.album = album;
         this.song = song;
         this.trackIndex = trackIndex;
     }
 
     public AlbumTrack(Long id, Album album, Song song, Integer trackIndex) {
         this.id = id;
-        //this.album = album;
+        this.album = album;
         this.song = song;
         this.trackIndex = trackIndex;
     }
 
     public AlbumTrack(AlbumTrack albumTrack) {
         this.id = albumTrack.id;
-        //this.album = albumTrack.album;
+        this.album = albumTrack.album;
         this.song = albumTrack.song;
         this.trackIndex = albumTrack.trackIndex;
     }
@@ -61,10 +59,8 @@ public class AlbumTrack {
     public Long getId() {return id;}
     public void setId(Long id) {this.id = id;}
 
-    /*
     public Album getAlbum() {return album;}
     public void setAlbum(Album album) {this.album = album;}
-     */
 
     public Song getSong() {return song;}
     public void setSong(Song song) {this.song = song;}
@@ -78,7 +74,7 @@ public class AlbumTrack {
     public String toString() {
         return "AlbumTrack{" +
                 "id=" + id +
-                //", album=" + album +
+                ", album=" + album +
                 ", song=" + song +
                 ", trackIndex=" + trackIndex +
                 '}';
