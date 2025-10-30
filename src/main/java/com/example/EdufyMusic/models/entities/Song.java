@@ -1,4 +1,4 @@
-package com.example.EdufyMusic.entities;
+package com.example.EdufyMusic.models.entities;
 
 
 import jakarta.persistence.*;
@@ -36,6 +36,13 @@ public class Song {
     @Column(name = "song_release_date", nullable = false)
     private LocalDate releaseDate;
 
+    @ElementCollection
+    @CollectionTable(
+            name = "song_genres",
+            joinColumns = @JoinColumn(name = "song_id"))
+    @Column(name = "genre_id", nullable = false)
+    private List<Long> songGenreIds = new ArrayList<>();
+
     /*
     @ManyToMany
     @JoinColumn(name = "song_genres")
@@ -66,7 +73,7 @@ public class Song {
             String url,
             LocalTime Length,
             LocalDate releaseDate,
-            List<Genre> genres,
+            List<Long> songGenreIds,
             List<Creator> creators,
             List<AlbumTrack> albumTracks,
             Long numberOfStreams,
@@ -76,7 +83,7 @@ public class Song {
         this.url = url;
         this.Length = Length;
         this.releaseDate = releaseDate;
-        //this.genres = genres;
+        this.songGenreIds = songGenreIds;
         //this.creators = creators;
         this.albumTracks = albumTracks;
         this.numberOfStreams = numberOfStreams;
@@ -89,7 +96,7 @@ public class Song {
             String url,
             LocalTime Length,
             LocalDate releaseDate,
-            List<Genre> genres,
+            List<Long> songGenreIds,
             List<Creator> creators,
             List<AlbumTrack> albumTracks,
             Long numberOfStreams,
@@ -100,7 +107,7 @@ public class Song {
         this.url = url;
         this.Length = Length;
         this.releaseDate = releaseDate;
-        //this.genres = genres;
+        this.songGenreIds = songGenreIds;
         //this.creators = creators;
         this.albumTracks = albumTracks;
         this.numberOfStreams = numberOfStreams;
@@ -114,7 +121,7 @@ public class Song {
         this.url = song.url;
         this.Length = song.Length;
         this.releaseDate = song.releaseDate;
-        //this.genres = song.genres;
+        this.songGenreIds = song.songGenreIds;
         //this.creators = song.creators;
         this.albumTracks = song.albumTracks;
         this.numberOfStreams = song.numberOfStreams;
@@ -137,6 +144,9 @@ public class Song {
 
     public LocalDate getReleaseDate() {return releaseDate;}
     public void setReleaseDate(LocalDate releaseDate) {this.releaseDate = releaseDate;}
+
+    public List<Long> getSongGenreIds() {return songGenreIds;}
+    public void setSongGenreIds(List<Long> songGenreIds) {this.songGenreIds = songGenreIds;}
 
     /*
     public List<Genre> getGenres() {return genres;}

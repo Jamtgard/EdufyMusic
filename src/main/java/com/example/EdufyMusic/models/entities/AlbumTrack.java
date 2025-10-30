@@ -1,4 +1,4 @@
-package com.example.EdufyMusic.entities;
+package com.example.EdufyMusic.models.entities;
 
 import jakarta.persistence.*;
 
