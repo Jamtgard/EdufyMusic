@@ -31,6 +31,7 @@ public class Album {
     @Column(name = "album_release_date")
     private LocalDate releaseDate;
 
+    // ED-114-SJ
     @ElementCollection
     @CollectionTable(
             name = "album_genres",
@@ -38,23 +39,13 @@ public class Album {
     @Column(name = "genre_id", nullable = false)
     private List<Long> albumGenreIds = new ArrayList<>();
 
-    /*
-    @ManyToMany
-    @JoinTable(
+    // ED-113-SJ
+    @ElementCollection
+    @CollectionTable(
             name = "album_creators",
-            joinColumns = @JoinColumn(name = "album_id"),
-            inverseJoinColumns = @JoinColumn(name = "creator_id")
-    )
-    private List<Creator> creators = new ArrayList<>();
-
-    @ManyToMany
-    @JoinTable(
-            name = "album_genre",
-            joinColumns = @JoinColumn(name = "album_id"),
-            inverseJoinColumns = @JoinColumn(name = "genre_id")
-    )
-    private List<Genre> genres = new ArrayList<>();
-     */
+            joinColumns = @JoinColumn(name = "album_id"))
+    @Column(name = "creator_id", nullable = false)
+    private List<Long> albumCreatorIds = new ArrayList<>();
 
     @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("trackIndex asc")
@@ -75,7 +66,7 @@ public class Album {
             String url,
             LocalTime length,
             LocalDate releaseDate,
-            List<Creator> creators,
+            List<Long> albumCreatorIds,
             List<Long> albumGenreIds,
             List<AlbumTrack> albumTracks,
             Long numberOfStreams,
@@ -85,7 +76,7 @@ public class Album {
         this.url = url;
         this.length = length;
         this.releaseDate = releaseDate;
-        //this.creators = creators;
+        this.albumCreatorIds = albumCreatorIds;
         this.albumGenreIds = albumGenreIds;
         this.albumTracks = albumTracks;
         this.numberOfStreams = numberOfStreams;
@@ -98,7 +89,7 @@ public class Album {
             String url,
             LocalTime length,
             LocalDate releaseDate,
-            List<Creator> creators,
+            List<Long> albumCreatorIds,
             List<Long> albumGenreIds,
             List<AlbumTrack> albumTracks,
             Long numberOfStreams,
@@ -109,7 +100,7 @@ public class Album {
         this.url = url;
         this.length = length;
         this.releaseDate = releaseDate;
-        //this.creators = creators;
+        this.albumCreatorIds = albumCreatorIds;
         this.albumGenreIds = albumGenreIds;
         this.albumTracks = albumTracks;
         this.numberOfStreams = numberOfStreams;
@@ -122,7 +113,7 @@ public class Album {
         this.url = album.url;
         this.length = album.length;
         this.releaseDate = album.releaseDate;
-        //this.creators = album.creators;
+        this.albumCreatorIds = album.albumCreatorIds;
         this.albumGenreIds = album.albumGenreIds;
         this.albumTracks = album.albumTracks;
         this.numberOfStreams = album.numberOfStreams;
@@ -146,10 +137,8 @@ public class Album {
     public LocalDate getReleaseDate() {return releaseDate;}
     public void setReleaseDate(LocalDate releaseDate) {this.releaseDate = releaseDate;}
 
-    /*
-    public List<Creator> getCreators() {return creators;}
-    public void setCreators(List<Creator> creators) {this.creators = creators;}
-    */
+    public List<Long> getAlbumCreatorIds() {return albumCreatorIds;}
+    public void setAlbumCreatorIds(List<Long> albumCreatorIds) {this.albumCreatorIds = albumCreatorIds;}
 
     public List<Long> getAlbumGenreIds() {return albumGenreIds;}
     public void setAlbumGenreIds(List<Long> albumGenreIds) {this.albumGenreIds = albumGenreIds;}
@@ -173,8 +162,8 @@ public class Album {
                 ", url='" + url + '\'' +
                 ", length=" + length +
                 ", releaseDate=" + releaseDate +
-                //", creators=" + creators +
-                //", genres=" + genres +
+                ", albumGenreIds=" + albumGenreIds +
+                ", albumCreatorIds=" + albumCreatorIds +
                 ", albumTracks=" + albumTracks +
                 ", numberOfStreams=" + numberOfStreams +
                 ", active=" + active +
