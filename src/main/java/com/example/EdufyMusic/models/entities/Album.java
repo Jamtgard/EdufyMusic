@@ -1,4 +1,4 @@
-package com.example.EdufyMusic.entities;
+package com.example.EdufyMusic.models.entities;
 
 import jakarta.persistence.*;
 
@@ -30,6 +30,13 @@ public class Album {
 
     @Column(name = "album_release_date")
     private LocalDate releaseDate;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "album_genres",
+            joinColumns = @JoinColumn(name = "album_id"))
+    @Column(name = "genre_id", nullable = false)
+    private List<Long> albumGenreIds = new ArrayList<>();
 
     /*
     @ManyToMany
@@ -69,7 +76,7 @@ public class Album {
             LocalTime length,
             LocalDate releaseDate,
             List<Creator> creators,
-            List<Genre> genres,
+            List<Long> albumGenreIds,
             List<AlbumTrack> albumTracks,
             Long numberOfStreams,
             boolean active )
@@ -79,7 +86,7 @@ public class Album {
         this.length = length;
         this.releaseDate = releaseDate;
         //this.creators = creators;
-        //this.genres = genres;
+        this.albumGenreIds = albumGenreIds;
         this.albumTracks = albumTracks;
         this.numberOfStreams = numberOfStreams;
         this.active = active;
@@ -92,7 +99,7 @@ public class Album {
             LocalTime length,
             LocalDate releaseDate,
             List<Creator> creators,
-            List<Genre> genres,
+            List<Long> albumGenreIds,
             List<AlbumTrack> albumTracks,
             Long numberOfStreams,
             boolean active )
@@ -103,7 +110,7 @@ public class Album {
         this.length = length;
         this.releaseDate = releaseDate;
         //this.creators = creators;
-        //this.genres = genres;
+        this.albumGenreIds = albumGenreIds;
         this.albumTracks = albumTracks;
         this.numberOfStreams = numberOfStreams;
         this.active = active;
@@ -116,7 +123,7 @@ public class Album {
         this.length = album.length;
         this.releaseDate = album.releaseDate;
         //this.creators = album.creators;
-        //this.genres = album.genres;
+        this.albumGenreIds = album.albumGenreIds;
         this.albumTracks = album.albumTracks;
         this.numberOfStreams = album.numberOfStreams;
         this.active = album.active;
@@ -142,10 +149,10 @@ public class Album {
     /*
     public List<Creator> getCreators() {return creators;}
     public void setCreators(List<Creator> creators) {this.creators = creators;}
+    */
 
-    public List<Genre> getGenres() {return genres;}
-    public void setGenres(List<Genre> genres) {this.genres = genres;}
-     */
+    public List<Long> getAlbumGenreIds() {return albumGenreIds;}
+    public void setAlbumGenreIds(List<Long> albumGenreIds) {this.albumGenreIds = albumGenreIds;}
 
     public List<AlbumTrack> getAlbumTracks() {return albumTracks;}
     public void setAlbumTracks(List<AlbumTrack> albumTracks) {this.albumTracks = albumTracks;}
