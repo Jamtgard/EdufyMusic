@@ -14,7 +14,6 @@ VALUES
     (9, 'Golden Hour', 'https://music.example.com/album/9', '00:38:40', '2021-11-08', 311105, true),
     (10, 'Afterglow', 'https://music.example.com/album/10', '00:38:55', '2021-11-28', 323450, true);
 
-
 -- Link Creator to album
 
 -- 1x (1x Album / 5x Creator)
