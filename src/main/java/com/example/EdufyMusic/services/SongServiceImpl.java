@@ -8,17 +8,18 @@ import com.example.EdufyMusic.repositories.SongRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 // ED-74-SJ
 @Service
 public class SongServiceImpl implements SongService {
-
-    // ED-74-SJ
 
     private final SongRepository songRepository;
 
     @Autowired
     public SongServiceImpl(SongRepository songRepository) {this.songRepository = songRepository;}
 
+    // ED-74-SJ
     @Override
     public SongResponseDTO getSongById(long id) {
         Song song = songRepository.findById(id).orElseThrow(
@@ -31,4 +32,15 @@ public class SongServiceImpl implements SongService {
 
         return SongResponseMapper.toDto(song);
     }
+
+    // ED-49-SJ
+    @Override
+    public List<SongResponseDTO> findSongByTitle(String title) {
+        return songRepository.findByTitleContainingIgnoreCaseAndActiveIsTrue(title)
+                .stream()
+                .map(SongResponseMapper::toDto)
+                .toList();
+    }
+
+
 }
