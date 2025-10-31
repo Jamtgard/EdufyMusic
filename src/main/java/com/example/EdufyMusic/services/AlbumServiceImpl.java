@@ -8,6 +8,8 @@ import com.example.EdufyMusic.repositories.AlbumRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 // ED-39-SJ
 @Service
 public class AlbumServiceImpl implements AlbumService {
@@ -30,5 +32,15 @@ public class AlbumServiceImpl implements AlbumService {
 
         return AlbumResponseMapper.toDto(album);
     }
+
+    // ED-50-SJ
+    @Override
+    public List<AlbumResponseDTO> getAlbumsByTitle(String title) {
+        return albumRepository.findByTitleContainingIgnoreCaseAndActiveIsTrue(title)
+                .stream()
+                .map(AlbumResponseMapper::toDto)
+                .toList();
+    }
+
 
 }
