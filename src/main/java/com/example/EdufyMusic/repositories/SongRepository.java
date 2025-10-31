@@ -11,6 +11,10 @@ import java.util.List;
 @Repository
 public interface SongRepository extends JpaRepository<Song, Long> {
 
+// USER SEARCHES -------------------------------------------------------------------------------------------------------
+
     // ED-49-SJ
-    List<Song> findByTitleContainingIgnoreCase(String title);
+    List<Song> findByTitleContainingIgnoreCaseAndActiveIsTrue(String title);
+
+// ADMIN SEARCHES ------------------------------------------------------------------------------------------------------
 }

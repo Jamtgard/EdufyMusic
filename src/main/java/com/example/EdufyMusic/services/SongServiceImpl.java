@@ -36,7 +36,7 @@ public class SongServiceImpl implements SongService {
     // ED-49-SJ
     @Override
     public List<SongResponseDTO> findSongByTitle(String title) {
-        return songRepository.findByTitleContainingIgnoreCase(title)
+        return songRepository.findByTitleContainingIgnoreCaseAndActiveIsTrue(title)
                 .stream()
                 .map(SongResponseMapper::toDto)
                 .toList();
