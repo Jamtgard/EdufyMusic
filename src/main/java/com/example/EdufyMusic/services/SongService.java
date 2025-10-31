@@ -1,4 +1,10 @@
 package com.example.EdufyMusic.services;
 
-public class SongService {
+import com.example.EdufyMusic.models.DTO.SongResponseDTO;
+import com.example.EdufyMusic.repositories.SongRepository;
+
+public interface SongService {
+
+    SongResponseDTO getSongById(long id);
+
 }

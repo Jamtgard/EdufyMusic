@@ -1,4 +1,4 @@
 package com.example.EdufyMusic.services;
 
-public interface AlbumService {
+public class AlbumServiceImpl {
 }
