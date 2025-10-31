@@ -46,4 +46,10 @@ public class UserController {
         return ResponseEntity.ok(albumService.getAlbumById(id));
     }
 
+    // ED-50-SJ
+    @GetMapping("/album/search")
+    public ResponseEntity<List<AlbumResponseDTO>> getAlbumByTitle (@RequestParam String title) {
+        return ResponseEntity.ok(albumService.getAlbumsByTitle(title));
+    }
+
 }
