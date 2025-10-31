@@ -6,10 +6,9 @@ import com.example.EdufyMusic.services.AlbumService;
 import com.example.EdufyMusic.services.SongService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 // ED-39-SJ
 @RestController
@@ -33,6 +32,12 @@ public class UserController {
     @GetMapping("/song/{id}")
     public ResponseEntity<SongResponseDTO> getSongById (@PathVariable Long id){
         return ResponseEntity.ok(songService.getSongById(id));
+    }
+
+    // ED-49-SJ
+    @GetMapping("/song/search")
+    public ResponseEntity<List<SongResponseDTO>> getSongByTitle (@RequestParam String title) {
+        return ResponseEntity.ok(songService.findSongByTitle(title));
     }
 
     // ED-75-SJ
