@@ -6,9 +6,14 @@ import com.example.EdufyMusic.models.DTO.mappers.SongResponseMapper;
 import com.example.EdufyMusic.models.entities.Song;
 import com.example.EdufyMusic.repositories.SongRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 // ED-74-SJ
 @Service
@@ -36,10 +41,25 @@ public class SongServiceImpl implements SongService {
     // ED-49-SJ
     @Override
     public List<SongResponseDTO> findSongByTitle(String title) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = auth != null && auth.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch("ROLE_ADMIN"::equals);
+
+        List<Song> songs = isAdmin
+                ? songRepository.findByTitleContainingIgnoreCase(title)
+                : songRepository.findByTitleContainingIgnoreCaseAndActiveIsTrue(title);
+
+        return songs.stream()
+                .map(SongResponseMapper::toDto).collect(Collectors.toList());
+
+        /*
         return songRepository.findByTitleContainingIgnoreCaseAndActiveIsTrue(title)
                 .stream()
                 .map(SongResponseMapper::toDto)
                 .toList();
+         */
     }
 
 
