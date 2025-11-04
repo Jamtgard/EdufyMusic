@@ -21,7 +21,15 @@ public interface AlbumRepository extends JpaRepository<Album, Long> {
            """)
     List<Album> findByIdWithTracks(@Param("id") Long id);
 
+// USER SEARCHES -------------------------------------------------------------------------------------------------------
+
     // ED-50-SJ
     List<Album> findByTitleContainingIgnoreCaseAndActiveIsTrue(String title);
+
+
+// ADMIN SEARCHES ------------------------------------------------------------------------------------------------------
+
+    // ED-262-SJ
+    List<Album> findByTitleContainingIgnoreCase(String title);
 
 }
