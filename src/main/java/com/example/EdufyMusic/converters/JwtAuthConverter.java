@@ -7,7 +7,6 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtClaimNames;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.stereotype.Component;
@@ -24,23 +23,22 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
 
     private final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
 
-    @Value("${jwt.auth.converter.resource-id.name}")
-    private String resourceIdName;
-    @Value("${jwt.auth.converter.principle-attribute}")
-    private String principleAttribute;
+    // ED-265-SJ
+    @Value("${music.client.id}")
+    private String musicClientId;
 
 
     @Override
     public AbstractAuthenticationToken convert(@NotNull Jwt jwt) {
         Collection<GrantedAuthority> authorities = Stream.concat(
                 jwtGrantedAuthoritiesConverter.convert(jwt).stream(),
-                extractResourceRoles(jwt).stream())
+                getAuthorities(jwt).stream())
                 .collect(Collectors.toSet());
 
-        return new JwtAuthenticationToken(jwt, authorities, getPrincipalClaimName(jwt));
+        return new JwtAuthenticationToken(jwt, authorities);
     }
 
-    private Collection<? extends GrantedAuthority> extractResourceRoles(Jwt jwt) {
+    private Collection<? extends GrantedAuthority> getAuthorities(Jwt jwt) {
 
         Collection<String> resourceRoles;
         Map<String, Object> resourceAccess;
@@ -49,8 +47,8 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
         if (!jwt.hasClaim("resource_access")) {return Set.of();}
         resourceAccess = jwt.getClaimAsMap("resource_access");
 
-        if (!resourceAccess.containsKey(resourceIdName)) {return Set.of();}
-        resource = (Map<String, Object>) resourceAccess.get(resourceIdName);
+        if (!resourceAccess.containsKey(musicClientId)) {return Set.of();}
+        resource = (Map<String, Object>) resourceAccess.get(musicClientId);
 
         if (!resource.containsKey("roles")) {return Set.of();}
         resourceRoles = (Collection<String>) resource.get("roles");
@@ -59,13 +57,5 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
                 .stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                 .collect((Collectors.toSet()));
-    }
-
-    private String getPrincipalClaimName(Jwt jwt) {
-
-        String claimName = JwtClaimNames.SUB;
-        if (principleAttribute != null && !principleAttribute.isEmpty()) {claimName = principleAttribute;}
-
-        return jwt.getClaim(claimName);
     }
 }
