@@ -28,22 +28,10 @@ public class UserController {
         this.albumService = albumService;
     }
 
-    // ED-74-SJ
-    @GetMapping("/song/{id}")
-    public ResponseEntity<SongResponseDTO> getSongById (@PathVariable Long id){
-        return ResponseEntity.ok(songService.getSongById(id));
-    }
-
     // ED-49-SJ
     @GetMapping("/song/search")
     public ResponseEntity<List<SongResponseDTO>> getSongByTitle (@RequestParam String title) {
         return ResponseEntity.ok(songService.findSongByTitle(title));
-    }
-
-    // ED-75-SJ
-    @GetMapping("/album/{id}")
-    public ResponseEntity<AlbumResponseDTO> getAlbumById(@PathVariable Long id) {
-        return ResponseEntity.ok(albumService.getAlbumById(id));
     }
 
     // ED-50-SJ

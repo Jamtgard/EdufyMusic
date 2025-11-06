@@ -45,7 +45,7 @@ public class AlbumServiceImpl implements AlbumService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         boolean isAdmin = auth != null && auth.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .anyMatch("ROLE_ADMIN"::equals);
+                .anyMatch("ROLE_music_admin"::equals);
 
         List<Album> albums = isAdmin
                 ? albumRepository.findByTitleContainingIgnoreCase(title)
