@@ -45,7 +45,7 @@ public class SongServiceImpl implements SongService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         boolean isAdmin = auth != null && auth.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .anyMatch("ROLE_ADMIN"::equals);
+                .anyMatch("ROLE_music_admin"::equals);
 
         List<Song> songs = isAdmin
                 ? songRepository.findByTitleContainingIgnoreCase(title)
