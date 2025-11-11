@@ -4,7 +4,6 @@ import com.example.EdufyMusic.exceptions.ResourceNotFoundException;
 import com.example.EdufyMusic.models.DTO.AlbumResponseDTO;
 import com.example.EdufyMusic.models.DTO.mappers.AlbumResponseMapper;
 import com.example.EdufyMusic.models.entities.Album;
-import com.example.EdufyMusic.models.entities.Song;
 import com.example.EdufyMusic.repositories.AlbumRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -33,7 +32,6 @@ public class AlbumServiceImpl implements AlbumService {
         );
 
         // TODO hämta creatorUsernames via albumCreatorIds
-        // TODO hämta genreNames via AlbumGenreIds
 
         return AlbumResponseMapper.toDto(album);
     }

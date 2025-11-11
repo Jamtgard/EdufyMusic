@@ -10,7 +10,6 @@ public class SongResponseDTO {
     private Long id;
     private String title;
     private List<String> creatorUsernames;
-    private List<String> genreNames;
     private String url;
     private LocalTime length;
     private LocalDate releaseDate;
@@ -27,9 +26,6 @@ public class SongResponseDTO {
 
     public List<String> getCreatorUsernames() {return creatorUsernames;}
     public void setCreatorUsernames(List<String> creatorUsernames) {this.creatorUsernames = creatorUsernames;}
-
-    public List<String> getGenreNames() {return genreNames;}
-    public void setGenreNames(List<String> genreNames) {this.genreNames = genreNames;}
 
     public String getUrl() {return url;}
     public void setUrl(String url) {this.url = url;}
@@ -55,7 +51,6 @@ public class SongResponseDTO {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", creatorUsernames=" + creatorUsernames +
-                ", genreNames=" + genreNames +
                 ", url='" + url + '\'' +
                 ", length=" + length +
                 ", releaseDate=" + releaseDate +

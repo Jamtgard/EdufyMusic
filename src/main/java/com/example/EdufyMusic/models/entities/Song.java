@@ -32,14 +32,6 @@ public class Song {
     @Column(name = "song_release_date", nullable = false)
     private LocalDate releaseDate;
 
-    // ED-114-SJ
-    @ElementCollection
-    @CollectionTable(
-            name = "song_genres",
-            joinColumns = @JoinColumn(name = "song_id"))
-    @Column(name = "genre_id", nullable = false)
-    private List<Long> songGenreIds = new ArrayList<>();
-
     // ED-113-SJ
     @ElementCollection
     @CollectionTable(
@@ -66,7 +58,6 @@ public class Song {
             String url,
             LocalTime Length,
             LocalDate releaseDate,
-            List<Long> songGenreIds,
             List<Long> songCreatorIds,
             List<AlbumTrack> albumTracks,
             Long numberOfStreams,
@@ -77,7 +68,6 @@ public class Song {
         this.Length = Length;
         this.releaseDate = releaseDate;
         this.songCreatorIds = songCreatorIds;
-        this.songGenreIds = songGenreIds;;
         this.albumTracks = albumTracks;
         this.numberOfStreams = numberOfStreams;
         this.active = active;
@@ -90,7 +80,6 @@ public class Song {
             LocalTime Length,
             LocalDate releaseDate,
             List<Long> songCreatorIds,
-            List<Long> songGenreIds,
             List<AlbumTrack> albumTracks,
             Long numberOfStreams,
             boolean active)
@@ -101,7 +90,6 @@ public class Song {
         this.Length = Length;
         this.releaseDate = releaseDate;
         this.songCreatorIds = songCreatorIds;
-        this.songGenreIds = songGenreIds;
         this.albumTracks = albumTracks;
         this.numberOfStreams = numberOfStreams;
         this.active = active;
@@ -115,7 +103,6 @@ public class Song {
         this.Length = song.Length;
         this.releaseDate = song.releaseDate;
         this.songCreatorIds = song.songCreatorIds;
-        this.songGenreIds = song.songGenreIds;
         this.albumTracks = song.albumTracks;
         this.numberOfStreams = song.numberOfStreams;
         this.active = song.active;
@@ -137,9 +124,6 @@ public class Song {
 
     public LocalDate getReleaseDate() {return releaseDate;}
     public void setReleaseDate(LocalDate releaseDate) {this.releaseDate = releaseDate;}
-
-    public List<Long> getSongGenreIds() {return songGenreIds;}
-    public void setSongGenreIds(List<Long> songGenreIds) {this.songGenreIds = songGenreIds;}
 
     public List<Long> getSongCreatorIds() {return songCreatorIds;}
     public void setSongCreatorIds(List<Long> songCreatorIds) {this.songCreatorIds = songCreatorIds;}
@@ -163,7 +147,6 @@ public class Song {
                 ", url='" + url + '\'' +
                 ", Length=" + Length +
                 ", releaseDate=" + releaseDate +
-                ", songGenreIds=" + songGenreIds +
                 ", songCreatorIds=" + songCreatorIds +
                 ", albumTracks=" + albumTracks +
                 ", numberOfStreams=" + numberOfStreams +
