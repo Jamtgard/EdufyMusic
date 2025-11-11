@@ -16,13 +16,21 @@ public class AlbumResponseDTO {
     private Long timesPlayed;
     private Boolean active;
 
+    // ED-266-SJ
+    private List<GenreDTO> genres;
+
     private List<AlbumTrackSongDTO> albumTracks;
+
+
 
     public Long getId() {return id;}
     public void setId(Long id) {this.id = id;}
 
     public String getTitle() {return title;}
     public void setTitle(String title) {this.title = title;}
+
+    public List<String> getCreatorUsernames() {return creatorUsernames;}
+    public void setCreatorUsernames(List<String> creatorUsernames) {this.creatorUsernames = creatorUsernames;}
 
     public String getUrl() {return url;}
     public void setUrl(String url) {this.url = url;}
@@ -39,8 +47,8 @@ public class AlbumResponseDTO {
     public Boolean getActive() {return active;}
     public void setActive(Boolean active) {this.active = active;}
 
-    public List<String> getCreatorUsernames() {return creatorUsernames;}
-    public void setCreatorUsernames(List<String> creatorUsernames) {this.creatorUsernames = creatorUsernames;}
+    public List<GenreDTO> getGenres() {return genres;}
+    public void setGenres(List<GenreDTO> genres) {this.genres = genres;}
 
     public List<AlbumTrackSongDTO> getAlbumTracks() {return albumTracks;}
     public void setAlbumTracks(List<AlbumTrackSongDTO> albumTracks) {this.albumTracks = albumTracks;}
@@ -56,6 +64,7 @@ public class AlbumResponseDTO {
                 ", releaseDate=" + releaseDate +
                 ", timesPlayed=" + timesPlayed +
                 ", active=" + active +
+                ", genres=" + genres +
                 ", albumTracks=" + albumTracks +
                 '}';
     }

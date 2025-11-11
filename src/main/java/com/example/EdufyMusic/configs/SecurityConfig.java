@@ -2,6 +2,7 @@ package com.example.EdufyMusic.configs;
 
 import com.example.EdufyMusic.converters.JwtAuthConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -19,6 +20,10 @@ public class SecurityConfig {
 
     // ED-265-SJ
     private JwtAuthConverter jwtAuthConverter;
+
+    // ED-266-SJ
+    @Value("${genre.service.url}")
+    private String genreServiceUrl;
 
     @Autowired
     public void setJwtAuthConverter (JwtAuthConverter jwtAuthConverter) {

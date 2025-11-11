@@ -16,7 +16,12 @@ public class SongResponseDTO {
     private Long timesStreamed;
     private boolean active;
 
+    // ED-266-SJ
+    private List<GenreDTO> genres;
+
     private List<AlbumTrackInfoDTO> albumTracks;
+
+
 
     public Long getId() {return id;}
     public void setId(Long id) {this.id = id;}
@@ -42,6 +47,9 @@ public class SongResponseDTO {
     public boolean isActive() {return active;}
     public void setActive(boolean active) {this.active = active;}
 
+    public List<GenreDTO> getGenres() {return genres;}
+    public void setGenres(List<GenreDTO> genres) {this.genres = genres;}
+
     public List<AlbumTrackInfoDTO> getAlbumTracks() {return albumTracks;}
     public void setAlbumTracks(List<AlbumTrackInfoDTO> albumTracks) {this.albumTracks = albumTracks;}
 
@@ -56,6 +64,7 @@ public class SongResponseDTO {
                 ", releaseDate=" + releaseDate +
                 ", timesStreamed=" + timesStreamed +
                 ", active=" + active +
+                ", genres=" + genres +
                 ", albumTracks=" + albumTracks +
                 '}';
     }

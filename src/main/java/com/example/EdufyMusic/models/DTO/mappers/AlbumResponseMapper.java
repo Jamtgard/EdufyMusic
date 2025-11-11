@@ -1,35 +1,45 @@
 package com.example.EdufyMusic.models.DTO.mappers;
 
+import com.example.EdufyMusic.clients.GenreClient;
 import com.example.EdufyMusic.models.DTO.AlbumResponseDTO;
 import com.example.EdufyMusic.models.DTO.AlbumTrackSongDTO;
 import com.example.EdufyMusic.models.entities.Album;
 import com.example.EdufyMusic.models.entities.AlbumTrack;
 import com.example.EdufyMusic.models.entities.Song;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component
 public class AlbumResponseMapper {
 
-    private AlbumResponseMapper() {}
+    // ED-266-SJ
+    private static GenreClient genreClient;
 
-    public static AlbumResponseDTO toDto(Album entity) {
-        if (entity == null) {return null;}
+    // ED-266-SJ
+    @Autowired
+    private AlbumResponseMapper(GenreClient genreClient) {AlbumResponseMapper.genreClient = genreClient;}
+
+    public static AlbumResponseDTO toDto(Album album) {
+        if (album == null) {return null;}
 
         AlbumResponseDTO dto = new AlbumResponseDTO();
-        dto.setId(entity.getId());
-        dto.setTitle(entity.getTitle());
-        dto.setUrl(entity.getUrl());
-        dto.setLength(entity.getLength());
-        dto.setReleaseDate(entity.getReleaseDate());
-        dto.setTimesPlayed(entity.getNumberOfStreams());
-        dto.setActive(entity.isActive());
+        dto.setId(album.getId());
+        dto.setTitle(album.getTitle());
+        dto.setUrl(album.getUrl());
+        dto.setLength(album.getLength());
+        dto.setReleaseDate(album.getReleaseDate());
+        dto.setTimesPlayed(album.getNumberOfStreams());
+        dto.setActive(album.isActive());
 
         dto.setCreatorUsernames(Collections.emptyList()); // TODO albumCreatorIds
-        dto.setGenreNames(Collections.emptyList());       // TODO albumGenreIds
+        // ED-266-SJ
+        dto.setGenres(genreClient.getGenresByMedia("ALBUM", album.getId()));       // TODO albumGenreIds
 
-        dto.setAlbumTracks(mapTracks(entity.getAlbumTracks()));
+        dto.setAlbumTracks(mapTracks(album.getAlbumTracks()));
 
         return dto;
     }
