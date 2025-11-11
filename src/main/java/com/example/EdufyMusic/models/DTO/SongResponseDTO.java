@@ -10,14 +10,18 @@ public class SongResponseDTO {
     private Long id;
     private String title;
     private List<String> creatorUsernames;
-    private List<String> genreNames;
     private String url;
     private LocalTime length;
     private LocalDate releaseDate;
     private Long timesStreamed;
     private boolean active;
 
+    // ED-266-SJ
+    private List<GenreDTO> genres;
+
     private List<AlbumTrackInfoDTO> albumTracks;
+
+
 
     public Long getId() {return id;}
     public void setId(Long id) {this.id = id;}
@@ -27,9 +31,6 @@ public class SongResponseDTO {
 
     public List<String> getCreatorUsernames() {return creatorUsernames;}
     public void setCreatorUsernames(List<String> creatorUsernames) {this.creatorUsernames = creatorUsernames;}
-
-    public List<String> getGenreNames() {return genreNames;}
-    public void setGenreNames(List<String> genreNames) {this.genreNames = genreNames;}
 
     public String getUrl() {return url;}
     public void setUrl(String url) {this.url = url;}
@@ -46,6 +47,9 @@ public class SongResponseDTO {
     public boolean isActive() {return active;}
     public void setActive(boolean active) {this.active = active;}
 
+    public List<GenreDTO> getGenres() {return genres;}
+    public void setGenres(List<GenreDTO> genres) {this.genres = genres;}
+
     public List<AlbumTrackInfoDTO> getAlbumTracks() {return albumTracks;}
     public void setAlbumTracks(List<AlbumTrackInfoDTO> albumTracks) {this.albumTracks = albumTracks;}
 
@@ -55,12 +59,12 @@ public class SongResponseDTO {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", creatorUsernames=" + creatorUsernames +
-                ", genreNames=" + genreNames +
                 ", url='" + url + '\'' +
                 ", length=" + length +
                 ", releaseDate=" + releaseDate +
                 ", timesStreamed=" + timesStreamed +
                 ", active=" + active +
+                ", genres=" + genres +
                 ", albumTracks=" + albumTracks +
                 '}';
     }

@@ -31,7 +31,6 @@ public class SongServiceImpl implements SongService {
                 () -> new ResourceNotFoundException("Song", "id", id)
         );
 
-        // TODO Hämta Genre-namn från List<songGenreIds>
         // TODO Hämta Creator-username från List<songCreator>
         // TODO Hämta de album titlar där Song finns.
 

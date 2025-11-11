@@ -6,16 +6,17 @@ public class GenreDTO {
 // Attributes ----------------------------------------------------------------------------------------------------------
 
     private Long id;
-    private String title;
+    //ED-266-SJ - changed (title = name) to match MS Genre response.
+    private String name;
 
 // Constructors --------------------------------------------------------------------------------------------------------
 
     public GenreDTO() {}
 
-    public GenreDTO(Long id, String title)
+    public GenreDTO(Long id, String name)
     {
         this.id = id;
-        this.title = title;
+        this.name = name;
     }
 
 // Getters & Setters ---------------------------------------------------------------------------------------------------
@@ -23,8 +24,8 @@ public class GenreDTO {
     public Long getId() {return id;}
     public void setId(Long id) {this.id = id;}
 
-    public String getTitle() {return title;}
-    public void setTitle(String title) {this.title = title;}
+    public String getName() {return name;}
+    public void setName(String name) {this.name = name;}
 
 // toString ------------------------------------------------------------------------------------------------------------
 
@@ -32,7 +33,7 @@ public class GenreDTO {
     public String toString() {
         return "GenreDTO{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
+                ", title='" + name + '\'' +
                 '}';
     }
 }
