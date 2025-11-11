@@ -12,7 +12,7 @@ public interface SongService {
     SongResponseDTO getSongById(long id);
 
     //ED-49-SJ
-    List<SongResponseDTO> findSongByTitle(String title);
+    List<SongResponseDTO> findSongByTitle(String title, Authentication authentication);
 
     // ED-80-SJ
     List<SongResponseDTO> getAllSongs(Authentication authentication);

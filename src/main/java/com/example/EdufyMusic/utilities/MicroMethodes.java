@@ -1,4 +1,4 @@
-package com.example.EdufyMusic.utility;
+package com.example.EdufyMusic.utilities;
 
 import com.example.EdufyMusic.exceptions.NoContentException;
 

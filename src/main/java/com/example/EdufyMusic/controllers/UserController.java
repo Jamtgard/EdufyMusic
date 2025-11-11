@@ -6,6 +6,7 @@ import com.example.EdufyMusic.services.AlbumService;
 import com.example.EdufyMusic.services.SongService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,14 +31,14 @@ public class UserController {
 
     // ED-49-SJ
     @GetMapping("/song/search")
-    public ResponseEntity<List<SongResponseDTO>> getSongByTitle (@RequestParam String title) {
-        return ResponseEntity.ok(songService.findSongByTitle(title));
+    public ResponseEntity<List<SongResponseDTO>> getSongByTitle (@RequestParam String title, Authentication authentication) {
+        return ResponseEntity.ok(songService.findSongByTitle(title, authentication));
     }
 
     // ED-50-SJ
     @GetMapping("/album/search")
-    public ResponseEntity<List<AlbumResponseDTO>> getAlbumByTitle (@RequestParam String title) {
-        return ResponseEntity.ok(albumService.getAlbumsByTitle(title));
+    public ResponseEntity<List<AlbumResponseDTO>> getAlbumByTitle (@RequestParam String title, Authentication authentication) {
+        return ResponseEntity.ok(albumService.getAlbumsByTitle(title, authentication));
     }
 
 }
