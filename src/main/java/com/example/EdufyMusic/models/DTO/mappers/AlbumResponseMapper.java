@@ -1,12 +1,10 @@
 package com.example.EdufyMusic.models.DTO.mappers;
 
-import com.example.EdufyMusic.clients.GenreClient;
 import com.example.EdufyMusic.models.DTO.AlbumResponseDTO;
 import com.example.EdufyMusic.models.DTO.AlbumTrackSongDTO;
 import com.example.EdufyMusic.models.entities.Album;
 import com.example.EdufyMusic.models.entities.AlbumTrack;
 import com.example.EdufyMusic.models.entities.Song;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -15,13 +13,6 @@ import java.util.stream.Collectors;
 
 @Component
 public class AlbumResponseMapper {
-
-    // ED-266-SJ
-    private static GenreClient genreClient;
-
-    // ED-266-SJ
-    @Autowired
-    private AlbumResponseMapper(GenreClient genreClient) {AlbumResponseMapper.genreClient = genreClient;}
 
     public static AlbumResponseDTO toDto(Album album) {
         if (album == null) {return null;}
@@ -36,8 +27,6 @@ public class AlbumResponseMapper {
         dto.setActive(album.isActive());
 
         dto.setCreatorUsernames(Collections.emptyList()); // TODO albumCreatorIds
-        // ED-266-SJ
-        dto.setGenres(genreClient.getGenresByMedia("ALBUM", album.getId()));       // TODO albumGenreIds
 
         dto.setAlbumTracks(mapTracks(album.getAlbumTracks()));
 

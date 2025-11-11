@@ -16,9 +16,6 @@ public class AlbumResponseDTO {
     private Long timesPlayed;
     private Boolean active;
 
-    // ED-266-SJ
-    private List<GenreDTO> genres;
-
     private List<AlbumTrackSongDTO> albumTracks;
 
 
@@ -47,9 +44,6 @@ public class AlbumResponseDTO {
     public Boolean getActive() {return active;}
     public void setActive(Boolean active) {this.active = active;}
 
-    public List<GenreDTO> getGenres() {return genres;}
-    public void setGenres(List<GenreDTO> genres) {this.genres = genres;}
-
     public List<AlbumTrackSongDTO> getAlbumTracks() {return albumTracks;}
     public void setAlbumTracks(List<AlbumTrackSongDTO> albumTracks) {this.albumTracks = albumTracks;}
 
@@ -64,7 +58,6 @@ public class AlbumResponseDTO {
                 ", releaseDate=" + releaseDate +
                 ", timesPlayed=" + timesPlayed +
                 ", active=" + active +
-                ", genres=" + genres +
                 ", albumTracks=" + albumTracks +
                 '}';
     }
