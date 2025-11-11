@@ -16,9 +16,15 @@ public interface SongRepository extends JpaRepository<Song, Long> {
     // ED-49-SJ
     List<Song> findByTitleContainingIgnoreCaseAndActiveIsTrue(String title);
 
+    // ED-80-SJ
+    List<Song> findAllByActiveTrue();
+
 
 // ADMIN SEARCHES ------------------------------------------------------------------------------------------------------
 
     // ED-261-SJ
     List<Song> findByTitleContainingIgnoreCase(String title);
+
+    // ED-80-SJ
+    List<Song> findAll();
 }

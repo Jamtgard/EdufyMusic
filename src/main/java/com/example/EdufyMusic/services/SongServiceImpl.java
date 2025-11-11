@@ -1,10 +1,12 @@
 package com.example.EdufyMusic.services;
 
+import com.example.EdufyMusic.converters.Roles;
 import com.example.EdufyMusic.exceptions.ResourceNotFoundException;
 import com.example.EdufyMusic.models.DTO.SongResponseDTO;
 import com.example.EdufyMusic.models.DTO.mappers.SongResponseMapper;
 import com.example.EdufyMusic.models.entities.Song;
 import com.example.EdufyMusic.repositories.SongRepository;
+import com.example.EdufyMusic.utility.MicroMethodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,9 +22,15 @@ import java.util.stream.Collectors;
 public class SongServiceImpl implements SongService {
 
     private final SongRepository songRepository;
+    private static MicroMethodes microMethodes;
+    private final SongResponseMapper songResponseMapper;
 
     @Autowired
-    public SongServiceImpl(SongRepository songRepository) {this.songRepository = songRepository;}
+    public SongServiceImpl(SongRepository songRepository, SongResponseMapper songResponseMapper)
+    {
+        this.songRepository = songRepository;
+        this.songResponseMapper = songResponseMapper;
+    }
 
     // ED-74-SJ
     @Override
@@ -34,7 +42,7 @@ public class SongServiceImpl implements SongService {
         // TODO Hämta Creator-username från List<songCreator>
         // TODO Hämta de album titlar där Song finns.
 
-        return SongResponseMapper.toDto(song);
+        return SongResponseMapper.toDtoWithId(song);
     }
 
     // ED-49-SJ
@@ -51,7 +59,7 @@ public class SongServiceImpl implements SongService {
                 : songRepository.findByTitleContainingIgnoreCaseAndActiveIsTrue(title);
 
         return songs.stream()
-                .map(SongResponseMapper::toDto).collect(Collectors.toList());
+                .map(SongResponseMapper::toDtoWithId).collect(Collectors.toList());
 
         /*
         return songRepository.findByTitleContainingIgnoreCaseAndActiveIsTrue(title)
@@ -60,6 +68,26 @@ public class SongServiceImpl implements SongService {
                 .toList();
          */
     }
+
+    // ED-80-SJ
+    @Override
+    public List<SongResponseDTO> getAllSongs(Authentication authentication) {
+
+        List<Song> allSongs;
+        List<String> roles = Roles.getRoles(authentication);
+
+        if (roles.contains("music_admin") || roles.contains("edufy_realm_admin")) {
+            allSongs = songRepository.findAll();
+            microMethodes.validateListNotEmpty(allSongs, "List of all Songs");
+            return SongResponseMapper.toDtoListWithId(allSongs);
+        } else {
+            allSongs = songRepository.findAllByActiveTrue();
+            microMethodes.validateListNotEmpty(allSongs, "List of all Songs");
+            return SongResponseMapper.toDtoListNoId(allSongs);
+        }
+    }
+
+
 
 
 }

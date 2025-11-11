@@ -12,7 +12,7 @@ import java.util.List;
 
 // ED-39-SJ
 @RestController
-@RequestMapping("/music")
+@RequestMapping("/api/v1/music")
 public class UserController {
 
     // ED-74-SJ
