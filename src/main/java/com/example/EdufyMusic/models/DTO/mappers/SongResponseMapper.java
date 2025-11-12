@@ -1,5 +1,6 @@
 package com.example.EdufyMusic.models.DTO.mappers;
 
+import com.example.EdufyMusic.clients.CreatorClient;
 import com.example.EdufyMusic.clients.GenreClient;
 import com.example.EdufyMusic.models.DTO.AlbumTrackInfoDTO;
 import com.example.EdufyMusic.models.DTO.SongResponseDTO;
@@ -18,10 +19,16 @@ public class SongResponseMapper {
 
     // ED-266-SJ
     private static GenreClient genreClient;
+    // ED-275-SJ
+    private static CreatorClient creatorClient;
 
     // ED-266-SJ
     @Autowired
-    private SongResponseMapper(GenreClient genreClient) {SongResponseMapper.genreClient = genreClient;}
+    private SongResponseMapper(GenreClient genreClient, CreatorClient creatorClient)
+    {
+        SongResponseMapper.genreClient = genreClient;
+        SongResponseMapper.creatorClient = creatorClient;
+    }
 
     public static SongResponseDTO toDtoWithId(Song song)
     {
@@ -36,9 +43,10 @@ public class SongResponseMapper {
         dto.setTimesStreamed(song.getNumberOfStreams());
         dto.setActive(song.isActive());
 
-        dto.setCreatorUsernames(Collections.emptyList()); // TODO: resolve via songCreatorIds
         // ED-266-SJ
         dto.setGenres(genreClient.getGenresByMedia("SONG", song.getId()));
+        // ED-275-SJ
+        dto.setCreators(creatorClient.getCreatorsByMedia("SONG", song.getId()));
 
         dto.setAlbumTracks(mapAlbumTracks(song.getAlbumTracks()));
 
@@ -57,9 +65,10 @@ public class SongResponseMapper {
         dto.setReleaseDate(song.getReleaseDate());
         dto.setTimesStreamed(song.getNumberOfStreams());
 
-        dto.setCreatorUsernames(Collections.emptyList()); // TODO: resolve via songCreatorIds
         // ED-266-SJ
         dto.setGenres(genreClient.getGenresByMedia("SONG", song.getId()));
+        // ED-275-SJ
+        dto.setCreators(creatorClient.getCreatorsByMedia("SONG", song.getId()));
 
         dto.setAlbumTracks(mapAlbumTracks(song.getAlbumTracks()));
 

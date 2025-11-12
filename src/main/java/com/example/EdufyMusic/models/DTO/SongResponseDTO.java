@@ -9,7 +9,6 @@ public class SongResponseDTO {
 
     private Long id;
     private String title;
-    private List<String> creatorUsernames;
     private String url;
     private LocalTime length;
     private LocalDate releaseDate;
@@ -18,9 +17,10 @@ public class SongResponseDTO {
 
     // ED-266-SJ
     private List<GenreDTO> genres;
+    // ED-275-SJ
+    private List<CreatorDTO> creators;
 
     private List<AlbumTrackInfoDTO> albumTracks;
-
 
 
     public Long getId() {return id;}
@@ -28,9 +28,6 @@ public class SongResponseDTO {
 
     public String getTitle() {return title;}
     public void setTitle(String title) {this.title = title;}
-
-    public List<String> getCreatorUsernames() {return creatorUsernames;}
-    public void setCreatorUsernames(List<String> creatorUsernames) {this.creatorUsernames = creatorUsernames;}
 
     public String getUrl() {return url;}
     public void setUrl(String url) {this.url = url;}
@@ -50,6 +47,9 @@ public class SongResponseDTO {
     public List<GenreDTO> getGenres() {return genres;}
     public void setGenres(List<GenreDTO> genres) {this.genres = genres;}
 
+    public List<CreatorDTO> getCreators() {return creators;}
+    public void setCreators(List<CreatorDTO> creators) {this.creators = creators;}
+
     public List<AlbumTrackInfoDTO> getAlbumTracks() {return albumTracks;}
     public void setAlbumTracks(List<AlbumTrackInfoDTO> albumTracks) {this.albumTracks = albumTracks;}
 
@@ -58,13 +58,13 @@ public class SongResponseDTO {
         return "SongResponseDTO{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", creatorUsernames=" + creatorUsernames +
                 ", url='" + url + '\'' +
                 ", length=" + length +
                 ", releaseDate=" + releaseDate +
                 ", timesStreamed=" + timesStreamed +
                 ", active=" + active +
                 ", genres=" + genres +
+                ", creators=" + creators +
                 ", albumTracks=" + albumTracks +
                 '}';
     }

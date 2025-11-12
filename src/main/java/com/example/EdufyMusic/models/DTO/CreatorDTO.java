@@ -6,16 +6,17 @@ public class CreatorDTO {
 // Attributes ----------------------------------------------------------------------------------------------------------
 
     private Long id;
-    private String title;
+    // ED-275-SJ changed attribute name to match response from MS Creator.
+    private String username;
 
 // Constructors --------------------------------------------------------------------------------------------------------
 
     public CreatorDTO() {}
 
-    public CreatorDTO(Long id, String title)
+    public CreatorDTO(Long id, String username)
     {
         this.id = id;
-        this.title = title;
+        this.username = username;
     }
 
 // Getters & Setters ---------------------------------------------------------------------------------------------------
@@ -23,8 +24,8 @@ public class CreatorDTO {
     public Long getId() {return id;}
     public void setId(Long id) {this.id = id;}
 
-    public String getTitle() {return title;}
-    public void setTitle(String title) {this.title = title;}
+    public String getUsername() {return username;}
+    public void setUsername(String username) {this.username = username;}
 
 // toString ------------------------------------------------------------------------------------------------------------
 
@@ -32,7 +33,7 @@ public class CreatorDTO {
     public String toString() {
         return "CreatorDTO{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
+                ", title='" + username + '\'' +
                 '}';
     }
 }
