@@ -12,7 +12,7 @@ import java.util.List;
 
 // ED-80-SJ
 @RestController
-@RequestMapping("/api/v1/music")
+@RequestMapping("/music")
 public class CommonController {
 
     private final SongService songService;
