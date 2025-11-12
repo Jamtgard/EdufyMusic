@@ -3,6 +3,7 @@ package com.example.EdufyMusic.clients;
 import com.example.EdufyMusic.models.DTO.GenreDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -24,7 +25,12 @@ public class GenreClient {
                 .buildAndExpand(mediaType, mediaId)
                 .toUriString();
 
-        GenreDTO[] genres = restTemplate.getForObject(url, GenreDTO[].class);
-        return genres != null ? Arrays.asList(genres) : List.of();
+        // ED-80-SJ - added failsafe function if MS Genre is down.
+        try {
+            GenreDTO[] genres = restTemplate.getForObject(url, GenreDTO[].class);
+            return genres != null ? Arrays.asList(genres) : List.of();
+        } catch (ResourceAccessException e){
+            return List.of();
+        }
     }
 }

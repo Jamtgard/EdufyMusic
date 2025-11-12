@@ -23,7 +23,7 @@ public class SongResponseMapper {
     @Autowired
     private SongResponseMapper(GenreClient genreClient) {SongResponseMapper.genreClient = genreClient;}
 
-    public static SongResponseDTO toDto(Song song)
+    public static SongResponseDTO toDtoWithId(Song song)
     {
         if (song == null) return null;
 
@@ -44,6 +44,46 @@ public class SongResponseMapper {
 
         return dto;
     }
+
+    // ED-80-SJ
+    public static SongResponseDTO toDtoNoId(Song song)
+    {
+     if (song == null) {return null;}
+
+        SongResponseDTO dto = new SongResponseDTO();
+        dto.setTitle(song.getTitle());
+        dto.setUrl(song.getUrl());
+        dto.setLength(song.getLength());
+        dto.setReleaseDate(song.getReleaseDate());
+        dto.setTimesStreamed(song.getNumberOfStreams());
+
+        dto.setCreatorUsernames(Collections.emptyList()); // TODO: resolve via songCreatorIds
+        // ED-266-SJ
+        dto.setGenres(genreClient.getGenresByMedia("SONG", song.getId()));
+
+        dto.setAlbumTracks(mapAlbumTracks(song.getAlbumTracks()));
+
+        return dto;
+    }
+
+    // ED-80-SJ
+    public static List<SongResponseDTO> toDtoListWithId(List<Song> songs)
+    {
+        if (songs == null || songs.isEmpty()) {return Collections.emptyList();}
+        return songs.stream()
+                .map(SongResponseMapper::toDtoWithId)
+                .collect(Collectors.toList());
+    }
+
+    // ED-80-SJ
+    public static List<SongResponseDTO> toDtoListNoId(List<Song> songs)
+    {
+        if (songs == null || songs.isEmpty()) {return Collections.emptyList();}
+        return songs.stream()
+                .map(SongResponseMapper::toDtoNoId)
+                .collect(Collectors.toList());
+    }
+
 
     private static List<AlbumTrackInfoDTO> mapAlbumTracks(List<AlbumTrack> albumTracks) {
 
