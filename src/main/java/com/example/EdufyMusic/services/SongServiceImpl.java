@@ -19,13 +19,11 @@ import java.util.List;
 public class SongServiceImpl implements SongService {
 
     private final SongRepository songRepository;
-    private final SongResponseMapper songResponseMapper;
 
     @Autowired
-    public SongServiceImpl(SongRepository songRepository, SongResponseMapper songResponseMapper)
+    public SongServiceImpl(SongRepository songRepository)
     {
         this.songRepository = songRepository;
-        this.songResponseMapper = songResponseMapper;
     }
 
     // ED-74-SJ

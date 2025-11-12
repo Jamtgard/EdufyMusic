@@ -43,7 +43,6 @@ public class AlbumResponseMapper {
         dto.setLength(album.getLength());
         dto.setReleaseDate(album.getReleaseDate());
         dto.setTimesPlayed(album.getNumberOfStreams());
-        dto.setActive(album.isActive());
 
         dto.setCreatorUsernames(Collections.emptyList()); // TODO albumCreatorIds
 

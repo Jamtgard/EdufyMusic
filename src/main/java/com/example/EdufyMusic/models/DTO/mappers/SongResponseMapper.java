@@ -56,7 +56,6 @@ public class SongResponseMapper {
         dto.setLength(song.getLength());
         dto.setReleaseDate(song.getReleaseDate());
         dto.setTimesStreamed(song.getNumberOfStreams());
-        dto.setActive(song.isActive());
 
         dto.setCreatorUsernames(Collections.emptyList()); // TODO: resolve via songCreatorIds
         // ED-266-SJ
