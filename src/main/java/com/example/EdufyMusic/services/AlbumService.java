@@ -13,4 +13,7 @@ public interface AlbumService {
 
     // ED-50-SJ
     List<AlbumResponseDTO> getAlbumsByTitle(String title, Authentication authentication);
+
+    // ED-81-SJ
+    List<AlbumResponseDTO> getAllAlbums(Authentication authentication);
 }

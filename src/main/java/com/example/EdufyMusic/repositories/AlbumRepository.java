@@ -26,6 +26,8 @@ public interface AlbumRepository extends JpaRepository<Album, Long> {
     // ED-50-SJ
     List<Album> findByTitleContainingIgnoreCaseAndActiveIsTrue(String title);
 
+    // ED-81-SJ
+    List<Album> findAllByActiveTrue();
 
 // ADMIN SEARCHES ------------------------------------------------------------------------------------------------------
 

@@ -52,4 +52,22 @@ public class AlbumServiceImpl implements AlbumService {
             return AlbumResponseMapper.toDtoListNoId(allAlbumsByTitle);
         }
     }
+
+    // ED-81-SJ
+    @Override
+    public List<AlbumResponseDTO> getAllAlbums(Authentication authentication) {
+
+        List<Album> allAlbums;
+        List<String> roles = Roles.getRoles(authentication);
+
+        if (roles.contains("music_admin") || roles.contains("edufy_realm_admin")) {
+            allAlbums = albumRepository.findAll();
+            MicroMethodes.validateListNotEmpty(allAlbums, "List of all Albums");
+            return AlbumResponseMapper.toDtoListWithId(allAlbums);
+        } else {
+            allAlbums = albumRepository.findAllByActiveTrue();
+            MicroMethodes.validateListNotEmpty(allAlbums, "List of all Albums");
+            return AlbumResponseMapper.toDtoListNoId(allAlbums);
+        }
+    }
 }
