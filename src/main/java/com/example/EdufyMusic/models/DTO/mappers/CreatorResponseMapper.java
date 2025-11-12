@@ -1,7 +1,6 @@
 package com.example.EdufyMusic.models.DTO.mappers;
 
 import com.example.EdufyMusic.models.DTO.CreatorViewDTO;
-import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplierBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -14,7 +13,7 @@ public class CreatorResponseMapper {
 
     public List<CreatorViewDTO> toDtoListWithId(List<CreatorViewDTO> creators) {
 
-        if (creators == null || creators.isEmpty()) {return Collections.emptyList()}
+        if (creators == null || creators.isEmpty()) {return Collections.emptyList();}
         return creators.stream()
                 .map(c -> new CreatorViewDTO(c.getId(), c.getUsername()))
                 .collect(Collectors.toList());
