@@ -3,6 +3,7 @@ package com.example.EdufyMusic.models.DTO.mappers;
 import com.example.EdufyMusic.clients.CreatorClient;
 import com.example.EdufyMusic.clients.GenreClient;
 import com.example.EdufyMusic.models.DTO.AlbumTrackInfoDTO;
+import com.example.EdufyMusic.models.DTO.CreatorDTO;
 import com.example.EdufyMusic.models.DTO.SongResponseDTO;
 import com.example.EdufyMusic.models.entities.AlbumTrack;
 import com.example.EdufyMusic.models.entities.Song;
@@ -48,7 +49,7 @@ public class SongResponseMapper {
         // ED-275-SJ
         dto.setCreators(creatorClient.getCreatorsByMedia("SONG", song.getId()));
 
-        dto.setAlbumTracks(mapAlbumTracks(song.getAlbumTracks()));
+        dto.setAlbumTracks(mapAlbumTracksWithId(song.getAlbumTracks()));
 
         return dto;
     }
@@ -67,10 +68,25 @@ public class SongResponseMapper {
 
         // ED-266-SJ
         dto.setGenres(genreClient.getGenresByMedia("SONG", song.getId()));
-        // ED-275-SJ
-        dto.setCreators(creatorClient.getCreatorsByMedia("SONG", song.getId()));
 
-        dto.setAlbumTracks(mapAlbumTracks(song.getAlbumTracks()));
+        // ED-275-SJ
+        //dto.setCreators(creatorClient.getCreatorsByMedia("SONG", song.getId()));
+
+        List<CreatorDTO> creators = creatorClient.getCreatorsByMedia("SONG", song.getId());
+        if (creators != null){
+            dto.setCreators(
+                    creators.stream()
+                            .map(c -> {
+                                CreatorDTO creatorDTO = new CreatorDTO();
+                                creatorDTO.setUsername(c.getUsername());
+                                return creatorDTO;
+                            })
+                    .collect(Collectors.toList())
+            );
+        }
+
+
+        dto.setAlbumTracks(mapAlbumTracksWithId(song.getAlbumTracks()));
 
         return dto;
     }
@@ -94,7 +110,20 @@ public class SongResponseMapper {
     }
 
 
-    private static List<AlbumTrackInfoDTO> mapAlbumTracks(List<AlbumTrack> albumTracks) {
+    private static List<AlbumTrackInfoDTO> mapAlbumTracksWithId(List<AlbumTrack> albumTracks) {
+
+        if (albumTracks == null) return Collections.emptyList();
+
+        return albumTracks.stream()
+                .map(at -> new AlbumTrackInfoDTO(
+                        at.getAlbum() != null ? at.getAlbum().getId() : null,
+                        at.getAlbum() != null ? at.getAlbum().getTitle() : null,
+                        at.getTrackIndex()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    private static List<AlbumTrackInfoDTO> mapAlbumTracksNoId(List<AlbumTrack> albumTracks) {
 
         if (albumTracks == null) return Collections.emptyList();
 

@@ -1,6 +1,9 @@
 package com.example.EdufyMusic.models.DTO;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 // ED-114-SJ
+@JsonInclude(JsonInclude.Include.NON_NULL) // ED-275-SJ
 public class GenreDTO {
 
 // Attributes ----------------------------------------------------------------------------------------------------------
