@@ -1,6 +1,7 @@
 package com.example.EdufyMusic.services;
 
 import com.example.EdufyMusic.models.DTO.AlbumResponseDTO;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -11,5 +12,8 @@ public interface AlbumService {
     AlbumResponseDTO getAlbumById(Long id);
 
     // ED-50-SJ
-    List<AlbumResponseDTO> getAlbumsByTitle(String title);
+    List<AlbumResponseDTO> getAlbumsByTitle(String title, Authentication authentication);
+
+    // ED-81-SJ
+    List<AlbumResponseDTO> getAllAlbums(Authentication authentication);
 }

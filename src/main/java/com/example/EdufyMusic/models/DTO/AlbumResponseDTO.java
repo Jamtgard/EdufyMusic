@@ -10,7 +10,6 @@ public class AlbumResponseDTO {
     private Long id;
     private String title;
     private List<String> creatorUsernames;
-    private List<String> genreNames;
     private String url;
     private LocalTime length;
     private LocalDate releaseDate;
@@ -19,11 +18,16 @@ public class AlbumResponseDTO {
 
     private List<AlbumTrackSongDTO> albumTracks;
 
+
+
     public Long getId() {return id;}
     public void setId(Long id) {this.id = id;}
 
     public String getTitle() {return title;}
     public void setTitle(String title) {this.title = title;}
+
+    public List<String> getCreatorUsernames() {return creatorUsernames;}
+    public void setCreatorUsernames(List<String> creatorUsernames) {this.creatorUsernames = creatorUsernames;}
 
     public String getUrl() {return url;}
     public void setUrl(String url) {this.url = url;}
@@ -40,12 +44,6 @@ public class AlbumResponseDTO {
     public Boolean getActive() {return active;}
     public void setActive(Boolean active) {this.active = active;}
 
-    public List<String> getCreatorUsernames() {return creatorUsernames;}
-    public void setCreatorUsernames(List<String> creatorUsernames) {this.creatorUsernames = creatorUsernames;}
-
-    public List<String> getGenreNames() {return genreNames;}
-    public void setGenreNames(List<String> genreNames) {this.genreNames = genreNames;}
-
     public List<AlbumTrackSongDTO> getAlbumTracks() {return albumTracks;}
     public void setAlbumTracks(List<AlbumTrackSongDTO> albumTracks) {this.albumTracks = albumTracks;}
 
@@ -55,7 +53,6 @@ public class AlbumResponseDTO {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", creatorUsernames=" + creatorUsernames +
-                ", genreNames=" + genreNames +
                 ", url='" + url + '\'' +
                 ", length=" + length +
                 ", releaseDate=" + releaseDate +

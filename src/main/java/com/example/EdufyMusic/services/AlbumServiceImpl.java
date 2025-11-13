@@ -1,26 +1,23 @@
 package com.example.EdufyMusic.services;
 
+import com.example.EdufyMusic.converters.Roles;
 import com.example.EdufyMusic.exceptions.ResourceNotFoundException;
 import com.example.EdufyMusic.models.DTO.AlbumResponseDTO;
 import com.example.EdufyMusic.models.DTO.mappers.AlbumResponseMapper;
 import com.example.EdufyMusic.models.entities.Album;
-import com.example.EdufyMusic.models.entities.Song;
 import com.example.EdufyMusic.repositories.AlbumRepository;
+import com.example.EdufyMusic.utilities.MicroMethodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 // ED-39-SJ
 @Service
 public class AlbumServiceImpl implements AlbumService {
 
     // ED-75-SJ
-
     private final AlbumRepository albumRepository;
 
     @Autowired
@@ -33,35 +30,44 @@ public class AlbumServiceImpl implements AlbumService {
         );
 
         // TODO hämta creatorUsernames via albumCreatorIds
-        // TODO hämta genreNames via AlbumGenreIds
 
-        return AlbumResponseMapper.toDto(album);
+        return AlbumResponseMapper.toDtoWithId(album);
     }
 
     // ED-50-SJ
+    // ED-80-SJ reworked structure with new way of authentication.
     @Override
-    public List<AlbumResponseDTO> getAlbumsByTitle(String title) {
+    public List<AlbumResponseDTO> getAlbumsByTitle(String title, Authentication authentication) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        boolean isAdmin = auth != null && auth.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .anyMatch("ROLE_music_admin"::equals);
+        List<Album> allAlbumsByTitle;
+        List<String> roles = Roles.getRoles(authentication);
 
-        List<Album> albums = isAdmin
-                ? albumRepository.findByTitleContainingIgnoreCase(title)
-                : albumRepository.findByTitleContainingIgnoreCaseAndActiveIsTrue(title);
-
-        return albums.stream()
-                .map(AlbumResponseMapper::toDto).collect(Collectors.toList());
-
-        /*
-        return albumRepository.findByTitleContainingIgnoreCaseAndActiveIsTrue(title)
-                .stream()
-                .map(AlbumResponseMapper::toDto)
-                .toList();
-
-         */
+        if (roles.contains("music_admin") || roles.contains("edufy_realm_admin")) {
+            allAlbumsByTitle = albumRepository.findByTitleContainingIgnoreCase(title);
+            MicroMethodes.validateListNotEmpty(allAlbumsByTitle, "List of Albums by title");
+            return AlbumResponseMapper.toDtoListWithId(allAlbumsByTitle);
+        } else {
+            allAlbumsByTitle = albumRepository.findByTitleContainingIgnoreCaseAndActiveIsTrue(title);
+            MicroMethodes.validateListNotEmpty(allAlbumsByTitle, "List of Albums by title");
+            return AlbumResponseMapper.toDtoListNoId(allAlbumsByTitle);
+        }
     }
 
+    // ED-81-SJ
+    @Override
+    public List<AlbumResponseDTO> getAllAlbums(Authentication authentication) {
 
+        List<Album> allAlbums;
+        List<String> roles = Roles.getRoles(authentication);
+
+        if (roles.contains("music_admin") || roles.contains("edufy_realm_admin")) {
+            allAlbums = albumRepository.findAll();
+            MicroMethodes.validateListNotEmpty(allAlbums, "List of all Albums");
+            return AlbumResponseMapper.toDtoListWithId(allAlbums);
+        } else {
+            allAlbums = albumRepository.findAllByActiveTrue();
+            MicroMethodes.validateListNotEmpty(allAlbums, "List of all Albums");
+            return AlbumResponseMapper.toDtoListNoId(allAlbums);
+        }
+    }
 }

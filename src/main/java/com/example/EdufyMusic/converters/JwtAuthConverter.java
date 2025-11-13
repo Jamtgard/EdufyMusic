@@ -27,18 +27,21 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
     @Value("${music.client.id}")
     private String musicClientId;
 
-
     @Override
     public AbstractAuthenticationToken convert(@NotNull Jwt jwt) {
         Collection<GrantedAuthority> authorities = Stream.concat(
-                jwtGrantedAuthoritiesConverter.convert(jwt).stream(),
-                getAuthorities(jwt).stream())
-                .collect(Collectors.toSet());
-
+                Stream.concat(
+                        jwtGrantedAuthoritiesConverter.convert(jwt).stream(),
+                        extractRoles(jwt).stream()
+                ),
+                    extractRealmRoles(jwt).stream()
+                ).collect(Collectors.toSet()
+        );
         return new JwtAuthenticationToken(jwt, authorities);
     }
 
-    private Collection<? extends GrantedAuthority> getAuthorities(Jwt jwt) {
+    // ED-80-SJ - Wanted to rework auth-flow, renamed for clarity.
+    private Collection<? extends GrantedAuthority> extractRoles(Jwt jwt) {
 
         Collection<String> resourceRoles;
         Map<String, Object> resourceAccess;
@@ -53,9 +56,26 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
         if (!resource.containsKey("roles")) {return Set.of();}
         resourceRoles = (Collection<String>) resource.get("roles");
 
-        return resourceRoles
-                .stream()
+        return resourceRoles.stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                 .collect((Collectors.toSet()));
+    }
+
+    // ED-80-SJ - Wanted to rework auth-flow, implemented new selection for better management of extracting realm roles.
+    private Collection<? extends GrantedAuthority> extractRealmRoles(Jwt jwt){
+
+        Map<String, Object> realmAccess;
+        Collection<String> realmRoles;
+
+        if(!jwt.hasClaim("realm_access")) {return Set.of();}
+        realmAccess = jwt.getClaimAsMap("realm_access");
+
+        if(!realmAccess.containsKey("roles")) {return Set.of();}
+
+        realmRoles = (Collection<String>) realmAccess.get("roles");
+
+        return realmRoles.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_"+role))
+                .collect(Collectors.toSet());
     }
 }

@@ -31,14 +31,6 @@ public class Album {
     @Column(name = "album_release_date")
     private LocalDate releaseDate;
 
-    // ED-114-SJ
-    @ElementCollection
-    @CollectionTable(
-            name = "album_genres",
-            joinColumns = @JoinColumn(name = "album_id"))
-    @Column(name = "genre_id", nullable = false)
-    private List<Long> albumGenreIds = new ArrayList<>();
-
     // ED-113-SJ
     @ElementCollection
     @CollectionTable(
@@ -67,7 +59,6 @@ public class Album {
             LocalTime length,
             LocalDate releaseDate,
             List<Long> albumCreatorIds,
-            List<Long> albumGenreIds,
             List<AlbumTrack> albumTracks,
             Long numberOfStreams,
             boolean active )
@@ -77,7 +68,6 @@ public class Album {
         this.length = length;
         this.releaseDate = releaseDate;
         this.albumCreatorIds = albumCreatorIds;
-        this.albumGenreIds = albumGenreIds;
         this.albumTracks = albumTracks;
         this.numberOfStreams = numberOfStreams;
         this.active = active;
@@ -90,7 +80,6 @@ public class Album {
             LocalTime length,
             LocalDate releaseDate,
             List<Long> albumCreatorIds,
-            List<Long> albumGenreIds,
             List<AlbumTrack> albumTracks,
             Long numberOfStreams,
             boolean active )
@@ -101,7 +90,6 @@ public class Album {
         this.length = length;
         this.releaseDate = releaseDate;
         this.albumCreatorIds = albumCreatorIds;
-        this.albumGenreIds = albumGenreIds;
         this.albumTracks = albumTracks;
         this.numberOfStreams = numberOfStreams;
         this.active = active;
@@ -114,7 +102,6 @@ public class Album {
         this.length = album.length;
         this.releaseDate = album.releaseDate;
         this.albumCreatorIds = album.albumCreatorIds;
-        this.albumGenreIds = album.albumGenreIds;
         this.albumTracks = album.albumTracks;
         this.numberOfStreams = album.numberOfStreams;
         this.active = album.active;
@@ -140,9 +127,6 @@ public class Album {
     public List<Long> getAlbumCreatorIds() {return albumCreatorIds;}
     public void setAlbumCreatorIds(List<Long> albumCreatorIds) {this.albumCreatorIds = albumCreatorIds;}
 
-    public List<Long> getAlbumGenreIds() {return albumGenreIds;}
-    public void setAlbumGenreIds(List<Long> albumGenreIds) {this.albumGenreIds = albumGenreIds;}
-
     public List<AlbumTrack> getAlbumTracks() {return albumTracks;}
     public void setAlbumTracks(List<AlbumTrack> albumTracks) {this.albumTracks = albumTracks;}
 
@@ -162,7 +146,6 @@ public class Album {
                 ", url='" + url + '\'' +
                 ", length=" + length +
                 ", releaseDate=" + releaseDate +
-                ", albumGenreIds=" + albumGenreIds +
                 ", albumCreatorIds=" + albumCreatorIds +
                 ", albumTracks=" + albumTracks +
                 ", numberOfStreams=" + numberOfStreams +

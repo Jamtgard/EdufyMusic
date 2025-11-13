@@ -5,33 +5,68 @@ import com.example.EdufyMusic.models.DTO.AlbumTrackSongDTO;
 import com.example.EdufyMusic.models.entities.Album;
 import com.example.EdufyMusic.models.entities.AlbumTrack;
 import com.example.EdufyMusic.models.entities.Song;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component
 public class AlbumResponseMapper {
 
-    private AlbumResponseMapper() {}
-
-    public static AlbumResponseDTO toDto(Album entity) {
-        if (entity == null) {return null;}
+    public static AlbumResponseDTO toDtoWithId(Album album) {
+        if (album == null) {return null;}
 
         AlbumResponseDTO dto = new AlbumResponseDTO();
-        dto.setId(entity.getId());
-        dto.setTitle(entity.getTitle());
-        dto.setUrl(entity.getUrl());
-        dto.setLength(entity.getLength());
-        dto.setReleaseDate(entity.getReleaseDate());
-        dto.setTimesPlayed(entity.getNumberOfStreams());
-        dto.setActive(entity.isActive());
+        dto.setId(album.getId());
+        dto.setTitle(album.getTitle());
+        dto.setUrl(album.getUrl());
+        dto.setLength(album.getLength());
+        dto.setReleaseDate(album.getReleaseDate());
+        dto.setTimesPlayed(album.getNumberOfStreams());
+        dto.setActive(album.isActive());
 
         dto.setCreatorUsernames(Collections.emptyList()); // TODO albumCreatorIds
-        dto.setGenreNames(Collections.emptyList());       // TODO albumGenreIds
 
-        dto.setAlbumTracks(mapTracks(entity.getAlbumTracks()));
+        dto.setAlbumTracks(mapTracks(album.getAlbumTracks()));
 
         return dto;
+    }
+
+    // ED-80-SJ
+    public static AlbumResponseDTO toDtoNoId(Album album) {
+        if (album == null) {return null;}
+
+        AlbumResponseDTO dto = new AlbumResponseDTO();
+        dto.setTitle(album.getTitle());
+        dto.setUrl(album.getUrl());
+        dto.setLength(album.getLength());
+        dto.setReleaseDate(album.getReleaseDate());
+        dto.setTimesPlayed(album.getNumberOfStreams());
+
+        dto.setCreatorUsernames(Collections.emptyList()); // TODO albumCreatorIds
+
+        dto.setAlbumTracks(mapTracks(album.getAlbumTracks()));
+
+        return dto;
+    }
+
+    // ED-80-SJ
+    public static List<AlbumResponseDTO> toDtoListWithId(List<Album> albums)
+    {
+        if (albums == null || albums.isEmpty()) {return Collections.emptyList();}
+        return albums.stream()
+                .map(AlbumResponseMapper::toDtoWithId)
+                .collect(Collectors.toList());
+    }
+
+    // ED-80-SJ
+    public static List<AlbumResponseDTO> toDtoListNoId(List<Album> albums)
+    {
+        if (albums == null || albums.isEmpty()) {return Collections.emptyList();}
+        return albums.stream()
+                .map(AlbumResponseMapper::toDtoNoId)
+                .collect(Collectors.toList());
     }
 
     private static List<AlbumTrackSongDTO> mapTracks(List<AlbumTrack> tracks) {
