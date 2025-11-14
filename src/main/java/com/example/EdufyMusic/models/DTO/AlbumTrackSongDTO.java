@@ -1,8 +1,11 @@
 package com.example.EdufyMusic.models.DTO;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.time.LocalTime;
 
 // ED-75-SJ
+@JsonInclude(JsonInclude.Include.NON_NULL) // ED-275-SJ
 public class AlbumTrackSongDTO {
 
     private Integer trackIndex;

@@ -26,9 +26,10 @@ public class AlbumResponseMapper {
         dto.setTimesPlayed(album.getNumberOfStreams());
         dto.setActive(album.isActive());
 
-        dto.setCreatorUsernames(Collections.emptyList()); // TODO albumCreatorIds
+        // ED-275-SJ
+        dto.setCreators(CreatorResponseMapper.getAlbumCreatorForAdmin(album));
 
-        dto.setAlbumTracks(mapTracks(album.getAlbumTracks()));
+        dto.setAlbumTracks(mapTracksForAdmin(album.getAlbumTracks()));
 
         return dto;
     }
@@ -44,9 +45,10 @@ public class AlbumResponseMapper {
         dto.setReleaseDate(album.getReleaseDate());
         dto.setTimesPlayed(album.getNumberOfStreams());
 
-        dto.setCreatorUsernames(Collections.emptyList()); // TODO albumCreatorIds
+        // ED-275-SJ
+        dto.setCreators(CreatorResponseMapper.getAlbumCreatorForUser(album));
 
-        dto.setAlbumTracks(mapTracks(album.getAlbumTracks()));
+        dto.setAlbumTracks(mapTracksForUser(album.getAlbumTracks()));
 
         return dto;
     }
@@ -69,7 +71,8 @@ public class AlbumResponseMapper {
                 .collect(Collectors.toList());
     }
 
-    private static List<AlbumTrackSongDTO> mapTracks(List<AlbumTrack> tracks) {
+    // ED-275-SJ
+    private static List<AlbumTrackSongDTO> mapTracksForAdmin(List<AlbumTrack> tracks) {
         if (tracks == null) return Collections.emptyList();
 
         return tracks.stream()
@@ -78,6 +81,24 @@ public class AlbumResponseMapper {
                     return new AlbumTrackSongDTO(
                             t.getTrackIndex(),
                             s != null ? s.getId() : null,
+                            s != null ? s.getTitle() : null,
+                            s != null ? s.getLength() : null,
+                            s != null ? s.getUrl() : null
+                    );
+                })
+                .collect(Collectors.toList());
+    }
+
+    // ED-275-SJ
+    private static List<AlbumTrackSongDTO> mapTracksForUser(List<AlbumTrack> tracks) {
+        if (tracks == null) return Collections.emptyList();
+
+        return tracks.stream()
+                .map(t -> {
+                    Song s = t.getSong();
+                    return new AlbumTrackSongDTO(
+                            t.getTrackIndex(),
+                            null,
                             s != null ? s.getTitle() : null,
                             s != null ? s.getLength() : null,
                             s != null ? s.getUrl() : null

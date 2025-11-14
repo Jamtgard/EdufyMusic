@@ -32,14 +32,6 @@ public class Song {
     @Column(name = "song_release_date", nullable = false)
     private LocalDate releaseDate;
 
-    // ED-113-SJ
-    @ElementCollection
-    @CollectionTable(
-            name = "song_creators",
-            joinColumns = @JoinColumn(name = "song_id"))
-    @Column(name = "creator_id", nullable = false)
-    private List<Long> songCreatorIds = new ArrayList<>();
-
     @OneToMany(mappedBy = "song", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AlbumTrack> albumTracks = new ArrayList<>();
 
@@ -58,7 +50,6 @@ public class Song {
             String url,
             LocalTime Length,
             LocalDate releaseDate,
-            List<Long> songCreatorIds,
             List<AlbumTrack> albumTracks,
             Long numberOfStreams,
             boolean active )
@@ -67,7 +58,6 @@ public class Song {
         this.url = url;
         this.Length = Length;
         this.releaseDate = releaseDate;
-        this.songCreatorIds = songCreatorIds;
         this.albumTracks = albumTracks;
         this.numberOfStreams = numberOfStreams;
         this.active = active;
@@ -79,7 +69,6 @@ public class Song {
             String url,
             LocalTime Length,
             LocalDate releaseDate,
-            List<Long> songCreatorIds,
             List<AlbumTrack> albumTracks,
             Long numberOfStreams,
             boolean active)
@@ -89,7 +78,6 @@ public class Song {
         this.url = url;
         this.Length = Length;
         this.releaseDate = releaseDate;
-        this.songCreatorIds = songCreatorIds;
         this.albumTracks = albumTracks;
         this.numberOfStreams = numberOfStreams;
         this.active = active;
@@ -102,7 +90,6 @@ public class Song {
         this.url = song.url;
         this.Length = song.Length;
         this.releaseDate = song.releaseDate;
-        this.songCreatorIds = song.songCreatorIds;
         this.albumTracks = song.albumTracks;
         this.numberOfStreams = song.numberOfStreams;
         this.active = song.active;
@@ -125,9 +112,6 @@ public class Song {
     public LocalDate getReleaseDate() {return releaseDate;}
     public void setReleaseDate(LocalDate releaseDate) {this.releaseDate = releaseDate;}
 
-    public List<Long> getSongCreatorIds() {return songCreatorIds;}
-    public void setSongCreatorIds(List<Long> songCreatorIds) {this.songCreatorIds = songCreatorIds;}
-
     public List<AlbumTrack> getAlbumTracks() {return albumTracks;}
     public void setAlbumTracks(List<AlbumTrack> albumTracks) {this.albumTracks = albumTracks;}
 
@@ -147,7 +131,6 @@ public class Song {
                 ", url='" + url + '\'' +
                 ", Length=" + Length +
                 ", releaseDate=" + releaseDate +
-                ", songCreatorIds=" + songCreatorIds +
                 ", albumTracks=" + albumTracks +
                 ", numberOfStreams=" + numberOfStreams +
                 ", active=" + active +

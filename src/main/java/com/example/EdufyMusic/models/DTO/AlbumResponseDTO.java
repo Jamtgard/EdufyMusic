@@ -1,20 +1,25 @@
 package com.example.EdufyMusic.models.DTO;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
 // ED-75-SJ
+@JsonInclude(JsonInclude.Include.NON_NULL) // ED-275-SJ
 public class AlbumResponseDTO {
 
     private Long id;
     private String title;
-    private List<String> creatorUsernames;
     private String url;
     private LocalTime length;
     private LocalDate releaseDate;
     private Long timesPlayed;
     private Boolean active;
+
+    // ED-275-SJ
+    private List<CreatorDTO> creators;
 
     private List<AlbumTrackSongDTO> albumTracks;
 
@@ -25,9 +30,6 @@ public class AlbumResponseDTO {
 
     public String getTitle() {return title;}
     public void setTitle(String title) {this.title = title;}
-
-    public List<String> getCreatorUsernames() {return creatorUsernames;}
-    public void setCreatorUsernames(List<String> creatorUsernames) {this.creatorUsernames = creatorUsernames;}
 
     public String getUrl() {return url;}
     public void setUrl(String url) {this.url = url;}
@@ -44,6 +46,9 @@ public class AlbumResponseDTO {
     public Boolean getActive() {return active;}
     public void setActive(Boolean active) {this.active = active;}
 
+    public List<CreatorDTO> getCreators() {return creators;}
+    public void setCreators(List<CreatorDTO> creators) {this.creators = creators;}
+
     public List<AlbumTrackSongDTO> getAlbumTracks() {return albumTracks;}
     public void setAlbumTracks(List<AlbumTrackSongDTO> albumTracks) {this.albumTracks = albumTracks;}
 
@@ -52,12 +57,12 @@ public class AlbumResponseDTO {
         return "AlbumResponseDTO{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", creatorUsernames=" + creatorUsernames +
                 ", url='" + url + '\'' +
                 ", length=" + length +
                 ", releaseDate=" + releaseDate +
                 ", timesPlayed=" + timesPlayed +
                 ", active=" + active +
+                ", creators=" + creators +
                 ", albumTracks=" + albumTracks +
                 '}';
     }

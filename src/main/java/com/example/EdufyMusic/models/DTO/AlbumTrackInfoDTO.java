@@ -1,6 +1,9 @@
 package com.example.EdufyMusic.models.DTO;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 // ED-74-SJ
+@JsonInclude(JsonInclude.Include.NON_NULL) // ED-275-SJ
 public class AlbumTrackInfoDTO {
 
     private Long albumId;
