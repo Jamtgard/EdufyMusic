@@ -1,6 +1,7 @@
 package com.example.EdufyMusic.clients;
 
 import com.example.EdufyMusic.models.DTO.GenreDTO;
+import com.example.EdufyMusic.models.DTO.requests.GenreCreateRecordRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
@@ -32,5 +33,19 @@ public class GenreClient {
         } catch (ResourceAccessException e){
             return List.of();
         }
+    }
+
+    // ED-235-SJ
+    public void createRecordOfSong(Long mediaId, List<Long> genreIds){
+        String url = UriComponentsBuilder.fromHttpUrl(genreServiceUrl)
+                .path("/api/v1/genre/media/record")
+                .toUriString();
+
+        GenreCreateRecordRequest body = new GenreCreateRecordRequest();
+        body.setMediaId(mediaId);
+        body.setMediaType("SONG");
+        body.setGenreIds(genreIds);
+
+        restTemplate.postForEntity(url, body, void.class);
     }
 }

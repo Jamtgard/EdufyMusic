@@ -1,15 +1,14 @@
 package com.example.EdufyMusic.controllers;
 
 import com.example.EdufyMusic.models.DTO.AlbumResponseDTO;
+import com.example.EdufyMusic.models.DTO.SongCreateDTO;
 import com.example.EdufyMusic.models.DTO.SongResponseDTO;
 import com.example.EdufyMusic.services.AlbumService;
 import com.example.EdufyMusic.services.SongService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/music")
@@ -38,5 +37,11 @@ public class AdminController {
     @GetMapping("/album/{id}")
     public ResponseEntity<AlbumResponseDTO> getAlbumById(@PathVariable Long id) {
         return ResponseEntity.ok(albumService.getAlbumById(id));
+    }
+
+    // ED-235-SJ
+    @PostMapping("/add-song")
+    public ResponseEntity<SongResponseDTO> createSong(@Valid @RequestBody SongCreateDTO dto){
+        return ResponseEntity.ok(songService.createSong(dto));
     }
 }
