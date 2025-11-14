@@ -20,4 +20,5 @@ public interface SongService {
     //ED-273-SJ
     List<SongResponseDTO> getAllSongsByGenre(Long genreId, Authentication authentication);
 
+
 }

@@ -44,4 +44,5 @@ public class CommonController {
     public ResponseEntity<List<SongResponseDTO>> getAllSongsByGenre(@PathVariable Long genreId, Authentication authentication) {
         return ResponseEntity.ok(songService.getAllSongsByGenre(genreId, authentication));
     }
+
 }
