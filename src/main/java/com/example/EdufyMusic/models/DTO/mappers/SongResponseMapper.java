@@ -1,13 +1,9 @@
 package com.example.EdufyMusic.models.DTO.mappers;
 
-import com.example.EdufyMusic.clients.CreatorClient;
-import com.example.EdufyMusic.clients.GenreClient;
 import com.example.EdufyMusic.models.DTO.AlbumTrackInfoDTO;
-import com.example.EdufyMusic.models.DTO.CreatorDTO;
 import com.example.EdufyMusic.models.DTO.SongResponseDTO;
 import com.example.EdufyMusic.models.entities.AlbumTrack;
 import com.example.EdufyMusic.models.entities.Song;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -17,19 +13,6 @@ import java.util.stream.Collectors;
 // ED-74-SJ
 @Component
 public class SongResponseMapper {
-
-    // ED-266-SJ
-    private static GenreClient genreClient;
-    // ED-275-SJ
-    private static CreatorClient creatorClient;
-
-    // ED-266-SJ
-    @Autowired
-    private SongResponseMapper(GenreClient genreClient, CreatorClient creatorClient)
-    {
-        SongResponseMapper.genreClient = genreClient;
-        SongResponseMapper.creatorClient = creatorClient;
-    }
 
     public static SongResponseDTO toDtoWithId(Song song)
     {
@@ -44,10 +27,10 @@ public class SongResponseMapper {
         dto.setTimesStreamed(song.getNumberOfStreams());
         dto.setActive(song.isActive());
 
-        // ED-266-SJ
-        dto.setGenres(genreClient.getGenresByMedia("SONG", song.getId()));
+        // ED-266-SJ // ED-275-SJ
+        dto.setGenres(GenreResponseMapper.getSongGenresForAdmin(song));
         // ED-275-SJ
-        dto.setCreators(creatorClient.getCreatorsByMedia("SONG", song.getId()));
+        dto.setCreators(CreatorResponseMapper.getSongCreatorsForAdmin(song));
 
         dto.setAlbumTracks(mapAlbumTracksWithId(song.getAlbumTracks()));
 
@@ -66,27 +49,14 @@ public class SongResponseMapper {
         dto.setReleaseDate(song.getReleaseDate());
         dto.setTimesStreamed(song.getNumberOfStreams());
 
-        // ED-266-SJ
-        dto.setGenres(genreClient.getGenresByMedia("SONG", song.getId()));
+        // ED-266-SJ // ED-275-SJ
+        dto.setGenres(GenreResponseMapper.getSongGenresForUser(song));
 
         // ED-275-SJ
-        //dto.setCreators(creatorClient.getCreatorsByMedia("SONG", song.getId()));
-
-        List<CreatorDTO> creators = creatorClient.getCreatorsByMedia("SONG", song.getId());
-        if (creators != null){
-            dto.setCreators(
-                    creators.stream()
-                            .map(c -> {
-                                CreatorDTO creatorDTO = new CreatorDTO();
-                                creatorDTO.setUsername(c.getUsername());
-                                return creatorDTO;
-                            })
-                    .collect(Collectors.toList())
-            );
-        }
+        dto.setCreators(CreatorResponseMapper.getSongCreatorForUser(song));
 
 
-        dto.setAlbumTracks(mapAlbumTracksWithId(song.getAlbumTracks()));
+        dto.setAlbumTracks(mapAlbumTracksNoId(song.getAlbumTracks()));
 
         return dto;
     }
@@ -124,12 +94,11 @@ public class SongResponseMapper {
     }
 
     private static List<AlbumTrackInfoDTO> mapAlbumTracksNoId(List<AlbumTrack> albumTracks) {
-
         if (albumTracks == null) return Collections.emptyList();
 
         return albumTracks.stream()
                 .map(at -> new AlbumTrackInfoDTO(
-                        at.getAlbum() != null ? at.getAlbum().getId() : null,
+                        null,
                         at.getAlbum() != null ? at.getAlbum().getTitle() : null,
                         at.getTrackIndex()
                 ))
