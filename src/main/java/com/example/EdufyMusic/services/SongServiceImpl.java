@@ -1,5 +1,6 @@
 package com.example.EdufyMusic.services;
 
+import com.example.EdufyMusic.clients.GenreClient;
 import com.example.EdufyMusic.converters.Roles;
 import com.example.EdufyMusic.exceptions.ResourceNotFoundException;
 import com.example.EdufyMusic.models.DTO.SongResponseDTO;
@@ -76,7 +77,15 @@ public class SongServiceImpl implements SongService {
         }
     }
 
+    @Override
+    public List<SongResponseDTO> getAllSongsByGenre(Long genreId, Authentication authentication) {
 
+        // List<Song> allSongsByGenre = GenreClient.getAllMediaByGenre
+
+        // task is locked, awaiting getAllMediaByGenre in MS Genre
+
+        return null;
+    }
 
 
 }
