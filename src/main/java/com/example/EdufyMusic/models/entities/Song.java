@@ -6,7 +6,9 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 // ED-110-SJ
 @Entity
@@ -35,8 +37,12 @@ public class Song {
     @OneToMany(mappedBy = "song", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AlbumTrack> albumTracks = new ArrayList<>();
 
-    @Column(name = "song_number_of_streams")
-    private Long numberOfStreams;
+    // ED-281-SJ
+    @ElementCollection
+    @CollectionTable(name = "song_user_history", joinColumns = @JoinColumn(name = "song_id"))
+    @MapKeyColumn(name = "user_id")
+    @Column(name = "times_played")
+    private Map<Long, Long> userHistory = new HashMap<>();
 
     @Column(name = "song_active")
     private boolean active;
@@ -51,7 +57,7 @@ public class Song {
             LocalTime Length,
             LocalDate releaseDate,
             List<AlbumTrack> albumTracks,
-            Long numberOfStreams,
+            Map<Long, Long> userHistory,
             boolean active )
     {
         this.title = title;
@@ -59,7 +65,7 @@ public class Song {
         this.Length = Length;
         this.releaseDate = releaseDate;
         this.albumTracks = albumTracks;
-        this.numberOfStreams = numberOfStreams;
+        this.userHistory = userHistory;
         this.active = active;
     }
 
@@ -70,7 +76,7 @@ public class Song {
             LocalTime Length,
             LocalDate releaseDate,
             List<AlbumTrack> albumTracks,
-            Long numberOfStreams,
+            Map<Long, Long> userHistory,
             boolean active)
     {
         this.id = id;
@@ -79,7 +85,7 @@ public class Song {
         this.Length = Length;
         this.releaseDate = releaseDate;
         this.albumTracks = albumTracks;
-        this.numberOfStreams = numberOfStreams;
+        this.userHistory = userHistory;
         this.active = active;
     }
 
@@ -91,7 +97,8 @@ public class Song {
         this.Length = song.Length;
         this.releaseDate = song.releaseDate;
         this.albumTracks = song.albumTracks;
-        this.numberOfStreams = song.numberOfStreams;
+        this.userHistory = song.userHistory;
+        // TODO get copy of songs numberOfStreams/timesPlayed
         this.active = song.active;
     }
 
@@ -115,13 +122,15 @@ public class Song {
     public List<AlbumTrack> getAlbumTracks() {return albumTracks;}
     public void setAlbumTracks(List<AlbumTrack> albumTracks) {this.albumTracks = albumTracks;}
 
-    public Long getNumberOfStreams() {return numberOfStreams;}
-    public void setNumberOfStreams(Long numberOfStreams) {this.numberOfStreams = numberOfStreams;}
+    public Map<Long, Long> getUserHistory() {return userHistory;}
+    public void setUserHistory(Map<Long, Long> userHistory) {this.userHistory = userHistory;}
+
+    public Long getTimesPlayed() {return userHistory.values().stream().mapToLong(Long::longValue).sum();}
 
     public boolean isActive() {return active;}
     public void setActive(boolean active) {this.active = active;}
 
-// toString ------------------------------------------------------------------------------------------------------------
+    // toString ------------------------------------------------------------------------------------------------------------
 
     @Override
     public String toString() {
@@ -132,7 +141,7 @@ public class Song {
                 ", Length=" + Length +
                 ", releaseDate=" + releaseDate +
                 ", albumTracks=" + albumTracks +
-                ", numberOfStreams=" + numberOfStreams +
+                ", timesPlayed=" + getTimesPlayed() +
                 ", active=" + active +
                 '}';
     }

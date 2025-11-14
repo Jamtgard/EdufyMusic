@@ -24,7 +24,6 @@ public class SongResponseMapper {
         dto.setUrl(song.getUrl());
         dto.setLength(song.getLength());
         dto.setReleaseDate(song.getReleaseDate());
-        dto.setTimesStreamed(song.getNumberOfStreams());
         dto.setActive(song.isActive());
 
         // ED-266-SJ // ED-275-SJ
@@ -47,7 +46,6 @@ public class SongResponseMapper {
         dto.setUrl(song.getUrl());
         dto.setLength(song.getLength());
         dto.setReleaseDate(song.getReleaseDate());
-        dto.setTimesStreamed(song.getNumberOfStreams());
 
         // ED-266-SJ // ED-275-SJ
         dto.setGenres(GenreResponseMapper.getSongGenresForUser(song));
@@ -77,6 +75,13 @@ public class SongResponseMapper {
         return songs.stream()
                 .map(SongResponseMapper::toDtoNoId)
                 .collect(Collectors.toList());
+    }
+
+    // ED-281-SJ
+    public static SongResponseDTO toDtoClientOnlyId(Long songId){
+        SongResponseDTO dto = new SongResponseDTO();
+        dto.setId(songId);
+        return dto;
     }
 
 

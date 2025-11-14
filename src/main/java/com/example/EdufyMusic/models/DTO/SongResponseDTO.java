@@ -15,7 +15,6 @@ public class SongResponseDTO {
     private String url;
     private LocalTime length;
     private LocalDate releaseDate;
-    private Long timesStreamed;
     private boolean active;
 
     // ED-266-SJ
@@ -41,9 +40,6 @@ public class SongResponseDTO {
     public LocalDate getReleaseDate() {return releaseDate;}
     public void setReleaseDate(LocalDate releaseDate) {this.releaseDate = releaseDate;}
 
-    public Long getTimesStreamed() {return timesStreamed;}
-    public void setTimesStreamed(Long timesStreamed) {this.timesStreamed = timesStreamed;}
-
     public boolean isActive() {return active;}
     public void setActive(boolean active) {this.active = active;}
 
@@ -64,7 +60,6 @@ public class SongResponseDTO {
                 ", url='" + url + '\'' +
                 ", length=" + length +
                 ", releaseDate=" + releaseDate +
-                ", timesStreamed=" + timesStreamed +
                 ", active=" + active +
                 ", genres=" + genres +
                 ", creators=" + creators +
