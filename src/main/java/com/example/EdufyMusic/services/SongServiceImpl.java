@@ -12,7 +12,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 // ED-74-SJ
 @Service
@@ -76,7 +78,16 @@ public class SongServiceImpl implements SongService {
         }
     }
 
+    @Override
+    public List<SongResponseDTO> getUserHistory(Long userId) {
+        List<Long> songsInUserHistory = songRepository.findSongIdsByUserIdInHistory(userId);
 
+        if (songsInUserHistory.isEmpty()) { return Collections.emptyList();}
+
+        return songsInUserHistory.stream()
+                .map(SongResponseMapper::toDtoClientOnlyId)
+                .collect(Collectors.toList());
+    }
 
 
 }

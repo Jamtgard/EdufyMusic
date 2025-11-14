@@ -17,4 +17,6 @@ public interface SongService {
     // ED-80-SJ
     List<SongResponseDTO> getAllSongs(Authentication authentication);
 
+    // ED-281-SJ
+    List<SongResponseDTO> getUserHistory(Long userId);
 }
