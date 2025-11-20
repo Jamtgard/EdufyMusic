@@ -9,7 +9,9 @@ import com.example.EdufyMusic.exceptions.ResourceNotFoundException;
 import com.example.EdufyMusic.models.DTO.SongCreateDTO;
 import com.example.EdufyMusic.models.DTO.SongResponseDTO;
 import com.example.EdufyMusic.models.DTO.mappers.SongResponseMapper;
+import com.example.EdufyMusic.models.DTO.requests.SongsByGenreDTORequest;
 import com.example.EdufyMusic.models.entities.Song;
+import com.example.EdufyMusic.models.enums.MediaType;
 import com.example.EdufyMusic.repositories.SongRepository;
 import com.example.EdufyMusic.utilities.MicroMethodes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 // ED-74-SJ
@@ -126,6 +131,41 @@ public class SongServiceImpl implements SongService {
         creatorClient.createRecordOfSong(song.getId(),dto.getCreatorIds());
 
         return null;
+    }
+
+    // ED-273-SJ
+    @Override
+    public List<SongResponseDTO> getSongsByGenre(Long genreId) {
+
+        SongsByGenreDTORequest request = genreClient.getSongsByGenre(genreId, MediaType.SONG);
+        List<Long> songIds = request != null
+                ? request.getMediaIds()
+                : Collections.emptyList();
+
+        MicroMethodes.validateListNotEmpty(songIds, "List of SongIds by Genre");
+
+        // Client vill inte ha !isActive i sitt resultat.
+        List<Song> songs = fetchSongsOrdered(songIds).stream()
+                .filter(Song::isActive)
+                .toList();
+
+        MicroMethodes.validateListNotEmpty(songs, "List of active Songs by Genre");
+
+        return SongResponseMapper.toDtoListWithId(songs);
+    }
+
+
+    // ED-273-SJ - Hämtar Songs & behåller samma ordning
+    private List<Song> fetchSongsOrdered(List<Long> ids) {
+        List<Song> fetched = songRepository.findAllById(ids);
+
+        Map<Long, Song> byId = fetched.stream()
+                .collect(Collectors.toMap(Song::getId, Function.identity()));
+
+        return ids.stream()
+                .map(byId::get)
+                .filter(Objects::nonNull)
+                .toList();
     }
 
 

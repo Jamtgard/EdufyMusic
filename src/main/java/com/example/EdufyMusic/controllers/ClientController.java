@@ -27,4 +27,12 @@ public class ClientController {
     public ResponseEntity<List<SongResponseDTO>> getUserHistory(@PathVariable Long userId) {
         return ResponseEntity.ok(songService.getUserHistory(userId));
     }
+
+    // ED-273-SJ
+    @GetMapping("/songs-genre/{genreId}")
+    public ResponseEntity<List<SongResponseDTO>> getSongsByGenre(@PathVariable Long genreId) {
+        return ResponseEntity.ok(songService.getSongsByGenre(genreId));
+    }
+
+
 }
