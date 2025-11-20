@@ -5,6 +5,7 @@ import com.example.EdufyMusic.exceptions.NoContentException;
 import com.example.EdufyMusic.models.DTO.CreatorDTO;
 import com.example.EdufyMusic.models.entities.Album;
 import com.example.EdufyMusic.models.entities.Song;
+import com.example.EdufyMusic.models.enums.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +23,7 @@ public class CreatorResponseMapper {
 
     // ED-275-SJ
     public static List<CreatorDTO> getSongCreatorsForAdmin(Song song) {
-        List<CreatorDTO> creators = creatorClient.getCreatorsByMedia("SONG", song.getId());
+        List<CreatorDTO> creators = creatorClient.getCreatorsByMedia(MediaType.SONG, song.getId());
         if (creators == null || creators.isEmpty()) {
             throw new NoContentException("List of Creators");
         }
@@ -42,7 +43,7 @@ public class CreatorResponseMapper {
 
     // ED-275-SJ
     public static List<CreatorDTO> getAlbumCreatorForAdmin(Album album) {
-        List<CreatorDTO> creators = creatorClient.getCreatorsByMedia("ALBUM", album.getId());
+        List<CreatorDTO> creators = creatorClient.getCreatorsByMedia(MediaType.ALBUM, album.getId());
         if (creators == null || creators.isEmpty()) {
             throw new NoContentException("List of Creators");
         }
