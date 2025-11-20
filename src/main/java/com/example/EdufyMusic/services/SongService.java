@@ -1,5 +1,6 @@
 package com.example.EdufyMusic.services;
 
+import com.example.EdufyMusic.models.DTO.SongCreateDTO;
 import com.example.EdufyMusic.models.DTO.SongResponseDTO;
 import org.springframework.security.core.Authentication;
 
@@ -17,8 +18,9 @@ public interface SongService {
     // ED-80-SJ
     List<SongResponseDTO> getAllSongs(Authentication authentication);
 
-    //ED-273-SJ
-    List<SongResponseDTO> getAllSongsByGenre(Long genreId, Authentication authentication);
+    // ED-281-SJ
+    List<SongResponseDTO> getUserHistory(Long userId);
 
-
+    // ED-235-Sj
+    SongResponseDTO createSong(SongCreateDTO dto);
 }

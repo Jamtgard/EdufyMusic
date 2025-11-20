@@ -2,6 +2,8 @@ package com.example.EdufyMusic.repositories;
 
 import com.example.EdufyMusic.models.entities.Song;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -27,4 +29,12 @@ public interface SongRepository extends JpaRepository<Song, Long> {
 
     // ED-80-SJ
     List<Song> findAll();
+
+// CLIENT SEARCHES -----------------------------------------------------------------------------------------------------
+
+    // ED-281-SJ
+    @Query("SELECT s.id FROM Song s JOIN s.userHistory h WHERE KEY(h) = :userId")
+    List<Long> findSongIdsByUserIdInHistory(@Param("userId") Long userId);
+
+
 }
