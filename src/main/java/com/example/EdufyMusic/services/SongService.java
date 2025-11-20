@@ -23,4 +23,7 @@ public interface SongService {
 
     // ED-235-Sj
     SongResponseDTO createSong(SongCreateDTO dto);
+
+    // ED-273-SJ
+    List<SongResponseDTO> getSongsByGenre(Long genreId);
 }

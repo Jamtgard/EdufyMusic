@@ -4,6 +4,7 @@ import com.example.EdufyMusic.exceptions.BadRequestException;
 import com.example.EdufyMusic.exceptions.RestClientException;
 import com.example.EdufyMusic.models.DTO.GenreDTO;
 import com.example.EdufyMusic.models.DTO.requests.GenreCreateRecordRequest;
+import com.example.EdufyMusic.models.DTO.requests.SongsByGenreDTORequest;
 import com.example.EdufyMusic.models.enums.MediaType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -65,6 +66,26 @@ public class GenreClient {
             String errorMessage = e.getResponseBodyAsString();
             throw new BadRequestException("Genre Service Error: " + errorMessage);
 
+        } catch (ResourceAccessException e) {
+            throw new RestClientException("Edufy Music", "Edufy Genre");
+        }
+    }
+
+    // ED-273-SJ
+    public SongsByGenreDTORequest getSongsByGenre(Long genreId, MediaType mediaType){
+        try {
+            ResponseEntity<SongsByGenreDTORequest> response = restClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/genre/{genreId}/media/by-type/{mediaType}")
+                            .build(genreId, mediaType))
+                    .retrieve()
+                    .toEntity(SongsByGenreDTORequest.class);
+
+            return response.getBody();
+
+        } catch (RestClientResponseException e) {
+            String errorMessage = e.getResponseBodyAsString();
+            throw new BadRequestException("Genre Service Error: " + errorMessage);
         } catch (ResourceAccessException e) {
             throw new RestClientException("Edufy Music", "Edufy Genre");
         }
