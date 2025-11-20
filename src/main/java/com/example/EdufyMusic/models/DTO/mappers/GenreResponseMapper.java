@@ -4,6 +4,7 @@ import com.example.EdufyMusic.clients.GenreClient;
 import com.example.EdufyMusic.exceptions.NoContentException;
 import com.example.EdufyMusic.models.DTO.GenreDTO;
 import com.example.EdufyMusic.models.entities.Song;
+import com.example.EdufyMusic.models.enums.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +22,7 @@ public class GenreResponseMapper {
 
     // ED-275-SJ
     public static List<GenreDTO> getSongGenresForAdmin (Song song) {
-        List<GenreDTO> genres = genreClient.getGenresByMedia("SONG", song.getId());
+        List<GenreDTO> genres = genreClient.getGenresByMedia(MediaType.SONG, song.getId());
         if (genres == null || genres.isEmpty()) {
             throw new NoContentException("List of Genres");
         }

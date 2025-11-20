@@ -1,11 +1,17 @@
 package com.example.EdufyMusic.clients;
 
+import com.example.EdufyMusic.exceptions.BadRequestException;
+import com.example.EdufyMusic.exceptions.RestClientException;
 import com.example.EdufyMusic.models.DTO.CreatorDTO;
+import com.example.EdufyMusic.models.DTO.requests.CreatorCreateRecordRequest;
+import com.example.EdufyMusic.models.enums.MediaType;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
+
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,23 +20,56 @@ import java.util.List;
 @Component
 public class CreatorClient {
 
-    @Value("${creator.service.url}")
-    private String creatorServiceUrl;
+    private final RestClient restClient;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    public CreatorClient(RestClient.Builder builder, @Value("${creator.service.url}") String creatorServiceUrl) {
+        this.restClient = builder
+                .baseUrl(creatorServiceUrl)
+                .build();
+    }
 
-    public List<CreatorDTO> getCreatorsByMedia(String mediaType, Long mediaId){
-        String url = UriComponentsBuilder.fromHttpUrl(creatorServiceUrl)
-                .path("/creator/creators-mediaid")
-                .queryParam("mediaType", mediaType)
-                .queryParam("id", mediaId)
-                .toUriString();
+    // ED-235-SJ Reworked to wrap in try{}
+    public List<CreatorDTO> getCreatorsByMedia(MediaType mediaType, Long mediaId){
 
-        try {
-            CreatorDTO[] creators = restTemplate.getForObject(url, CreatorDTO[].class);
-            return creators != null ? Arrays.asList(creators) : List.of();
+        try{
+            ResponseEntity<CreatorDTO[]> response = restClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/creator/creators-mediaid") // TODO Dubbelkolla om denna behöver "/creator"
+                            .queryParam("mediaType", mediaType)
+                            .queryParam("id", mediaId)
+                            .build())
+                    .retrieve()
+                    .toEntity(CreatorDTO[].class);
+
+            CreatorDTO[] creatorDTOs = response.getBody();
+            return creatorDTOs != null ? Arrays.asList(creatorDTOs) : List.of();
+
+        } catch (RestClientResponseException e) {
+            String errorMessage = e.getResponseBodyAsString();
+            throw new BadRequestException("Creator Service Error: " + errorMessage);
+
         } catch (ResourceAccessException e) {
-            return List.of();
+            throw new RestClientException("Edufy Music", "Edufy Creator");
+        }
+    }
+
+    // ED-235-SJ
+    public boolean createRecordOfSong(Long mediaId, List<Long> creatorIds) {
+        try {
+            ResponseEntity<Void> response = restClient.post()
+                    .uri("/creator/media/record") // TODO Dubbelkolla om denna behöver "/creator"
+                    .body(new CreatorCreateRecordRequest(mediaId, MediaType.SONG, creatorIds))
+                    .retrieve()
+                    .toBodilessEntity();
+
+            return response.getStatusCode().is2xxSuccessful();
+
+        } catch (RestClientResponseException e) {
+            String errorMessage = e.getResponseBodyAsString();
+            throw new BadRequestException("Creator Service Error: " + errorMessage);
+
+        } catch (ResourceAccessException e) {
+            throw new RestClientException("Edufy Music", "Edufy Creator");
         }
     }
 }
