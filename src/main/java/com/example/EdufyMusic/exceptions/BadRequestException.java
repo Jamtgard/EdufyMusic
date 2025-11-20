@@ -7,18 +7,25 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class BadRequestException extends RuntimeException {
 
-    private final String resource;
-    private final String fieldName;
-    private final String fieldValue;
+    private String resource;
+    private String fieldName;
+    private Object fieldValue;
+    private String message;
 
-    public BadRequestException(String resource, String fieldName, String fieldValue) {
+    public BadRequestException(String resource, String fieldName, Object fieldValue) {
         super(String.format("%s - Value is not allowed for %s : %s", resource, fieldName, fieldValue));
         this.resource = resource;
         this.fieldName = fieldName;
         this.fieldValue = fieldValue;
     }
 
+    public BadRequestException(String message) {
+        super(message);
+        this.message = message;
+    }
+
     public String getResource() {return resource;}
     public String getFieldName() {return fieldName;}
-    public String getFieldValue() {return fieldValue;}
+    public Object getFieldValue() {return fieldValue;}
+    public String getMessage() {return message;}
 }

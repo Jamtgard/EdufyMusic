@@ -101,7 +101,14 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
+    @Transactional
     public SongResponseDTO createSong(SongCreateDTO dto) {
+
+        if (dto == null) {throw new BadRequestException("Song", "body", "null");}
+        if (dto.getTitle() == null || dto.getTitle().isBlank()) {throw new BadRequestException("Song", "title", String.valueOf(dto.getTitle()));}
+        if (dto.getUrl() == null || dto.getUrl().isBlank()) {throw new BadRequestException("Song", "url", String.valueOf(dto.getUrl()));}
+        if (dto.getGenreIds() == null || dto.getGenreIds().isEmpty()) {throw new BadRequestException("Song", "genreIds", String.valueOf(dto.getGenreIds()));}
+        if (dto.getCreatorIds() == null || dto.getCreatorIds().isEmpty()) {throw new BadRequestException("Song", "creatorIds", String.valueOf(dto.getCreatorIds()));}
 
         Song song = new Song();
         song.setTitle(dto.getTitle());
@@ -113,20 +120,10 @@ public class SongServiceImpl implements SongService {
         song = songRepository.save(song);
 
         //TODO: Call createAlbum & connect
-        //TODO: create a more solid check for null & Resource not found.
 
         thumbClient.createRecordOfSong(song.getId(),song.getTitle());
-
-        if (dto.getGenreIds() == null || dto.getGenreIds().isEmpty()) {
-            throw new BadRequestException("Song", "Genre Ids", dto.getGenreIds().toString());
-        }
         genreClient.createRecordOfSong(song.getId(),dto.getGenreIds());
-
-        if (dto.getCreatorIds() == null || dto.getCreatorIds().isEmpty()) {
-            throw new BadRequestException("Song", "Creator Ids", dto.getCreatorIds().toString());
-        }
         creatorClient.createRecordOfSong(song.getId(),dto.getCreatorIds());
-
 
         return null;
     }

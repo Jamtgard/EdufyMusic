@@ -1,51 +1,72 @@
 package com.example.EdufyMusic.clients;
 
+import com.example.EdufyMusic.exceptions.BadRequestException;
+import com.example.EdufyMusic.exceptions.RestClientException;
 import com.example.EdufyMusic.models.DTO.GenreDTO;
 import com.example.EdufyMusic.models.DTO.requests.GenreCreateRecordRequest;
+import com.example.EdufyMusic.models.enums.MediaType;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
 
 import java.util.Arrays;
 import java.util.List;
 
 //ED-266-SJ - Created class to communicate with MS Genre
+// ED-235-SJ Reworked
 @Component
 public class GenreClient {
 
-    @Value("${genre.service.url}")
-    private String genreServiceUrl;
+    private final RestClient restClient;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    public GenreClient(RestClient.Builder builder,
+                       @Value("${genre.service.url}") String genreServiceUrl) {
+        this.restClient = builder
+                .baseUrl(genreServiceUrl)
+                .build();
+    }
 
-    public List<GenreDTO> getGenresByMedia(String mediaType, Long mediaId){
-        String url = UriComponentsBuilder.fromHttpUrl(genreServiceUrl)
-                .path("/api/v1/genre/by/media-id/{mediaType}/{mediaId}")
-                .buildAndExpand(mediaType, mediaId)
-                .toUriString();
-
-        // ED-80-SJ - added failsafe function if MS Genre is down.
+    public List<GenreDTO> getGenresByMedia(MediaType mediaType, Long mediaId){
         try {
-            GenreDTO[] genres = restTemplate.getForObject(url, GenreDTO[].class);
+            ResponseEntity<GenreDTO[]> response = restClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/genre/by/media-id/{mediaType}/{mediaId}") // TODO Dubbelkolla om denna behöver "/genre"
+                            .build(mediaType, mediaId))
+                    .retrieve()
+                    .toEntity(GenreDTO[].class);
+
+            GenreDTO[] genres = response.getBody();
             return genres != null ? Arrays.asList(genres) : List.of();
-        } catch (ResourceAccessException e){
-            return List.of();
+
+        } catch (RestClientResponseException e) {
+            String errorMessage = e.getResponseBodyAsString();
+            throw new BadRequestException("Genre Service Error: " + errorMessage);
+
+        } catch (ResourceAccessException e) {
+            throw new RestClientException("Edufy Music", "Edufy Genre");
         }
     }
 
     // ED-235-SJ
-    public void createRecordOfSong(Long mediaId, List<Long> genreIds){
-        String url = UriComponentsBuilder.fromHttpUrl(genreServiceUrl)
-                .path("/api/v1/genre/media/record")
-                .toUriString();
+    public boolean createRecordOfSong(Long mediaId, List<Long> genreIds){
+        try {
+            ResponseEntity<Void> response = restClient.post()
+                    .uri("/genre/media/record") // TODO Dubbelkolla om denna behöver "/genre"
+                    .body(new GenreCreateRecordRequest(mediaId, MediaType.SONG, genreIds))
+                    .retrieve()
+                    .toBodilessEntity();
 
-        GenreCreateRecordRequest body = new GenreCreateRecordRequest();
-        body.setMediaId(mediaId);
-        body.setMediaType("SONG");
-        body.setGenreIds(genreIds);
+            return response.getStatusCode().is2xxSuccessful();
 
-        restTemplate.postForEntity(url, body, void.class);
+        } catch (RestClientResponseException e) {
+            String errorMessage = e.getResponseBodyAsString();
+            throw new BadRequestException("Genre Service Error: " + errorMessage);
+
+        } catch (ResourceAccessException e) {
+            throw new RestClientException("Edufy Music", "Edufy Genre");
+        }
     }
 }
