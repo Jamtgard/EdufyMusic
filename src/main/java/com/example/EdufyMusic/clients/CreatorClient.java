@@ -3,6 +3,7 @@ package com.example.EdufyMusic.clients;
 import com.example.EdufyMusic.exceptions.BadRequestException;
 import com.example.EdufyMusic.exceptions.RestClientException;
 import com.example.EdufyMusic.models.DTO.CreatorDTO;
+import com.example.EdufyMusic.models.DTO.MusicByCreatorDTO;
 import com.example.EdufyMusic.models.DTO.requests.CreatorCreateRecordRequest;
 import com.example.EdufyMusic.models.enums.MediaType;
 import org.springframework.beans.factory.annotation.Value;
@@ -68,6 +69,24 @@ public class CreatorClient {
             String errorMessage = e.getResponseBodyAsString();
             throw new BadRequestException("Creator Service Error: " + errorMessage);
 
+        } catch (ResourceAccessException e) {
+            throw new RestClientException("Edufy Music", "Edufy Creator");
+        }
+    }
+
+    // ED-51-SJ
+    public MusicByCreatorDTO getMusicByCreator(Long creatorId) {
+        try {
+            ResponseEntity<MusicByCreatorDTO> response = restClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/creator/media-by-creator/{creatorId}")
+                            .build(creatorId))
+                    .retrieve()
+                    .toEntity(MusicByCreatorDTO.class);
+            return response.getBody();
+
+        } catch (RestClientResponseException e) {
+            throw new BadRequestException("Creator Service Error: " + e.getResponseBodyAsString());
         } catch (ResourceAccessException e) {
             throw new RestClientException("Edufy Music", "Edufy Creator");
         }
