@@ -18,7 +18,7 @@ public class ThumbClient {
 
     private final RestClient restClient;
 
-    public ThumbClient(RestClient.Builder builder, @Value("${services.thumb.url}") String thumbServiceUrl) {
+    public ThumbClient(RestClient.Builder builder, @Value("${thumb.service.url}") String thumbServiceUrl) {
         this.restClient = builder
                 .baseUrl(thumbServiceUrl)
                 .build();

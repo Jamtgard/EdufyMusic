@@ -1,5 +1,6 @@
 package com.example.EdufyMusic.controllers;
 
+import com.example.EdufyMusic.models.DTO.AlbumCreateDTO;
 import com.example.EdufyMusic.models.DTO.AlbumResponseDTO;
 import com.example.EdufyMusic.models.DTO.SongCreateDTO;
 import com.example.EdufyMusic.models.DTO.SongResponseDTO;
@@ -42,6 +43,12 @@ public class AdminController {
     // ED-235-SJ
     @PostMapping("/add-song")
     public ResponseEntity<SongResponseDTO> createSong(@Valid @RequestBody SongCreateDTO dto){
-        return ResponseEntity.ok(songService.createSong(dto));
+        return ResponseEntity.ok(songService.createSong(dto, false));
+    }
+
+    // ED-237-SJ
+    @PostMapping("/add-album")
+    public ResponseEntity<AlbumResponseDTO> createAlbum(@Valid @RequestBody AlbumCreateDTO dto){
+        return ResponseEntity.status(201).body(albumService.createAlbum(dto, false));
     }
 }
