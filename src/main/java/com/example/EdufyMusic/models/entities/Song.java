@@ -18,7 +18,7 @@ public class Song {
 // Attributes ----------------------------------------------------------------------------------------------------------
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "song_id")
     private Long id;
 

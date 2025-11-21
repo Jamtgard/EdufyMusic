@@ -6,10 +6,14 @@ import com.example.EdufyMusic.clients.ThumbClient;
 import com.example.EdufyMusic.converters.Roles;
 import com.example.EdufyMusic.exceptions.BadRequestException;
 import com.example.EdufyMusic.exceptions.ResourceNotFoundException;
+import com.example.EdufyMusic.models.DTO.AlbumCreateDTO;
+import com.example.EdufyMusic.models.DTO.AlbumResponseDTO;
 import com.example.EdufyMusic.models.DTO.SongCreateDTO;
 import com.example.EdufyMusic.models.DTO.SongResponseDTO;
 import com.example.EdufyMusic.models.DTO.mappers.SongResponseMapper;
 import com.example.EdufyMusic.models.DTO.requests.SongsByGenreDTORequest;
+import com.example.EdufyMusic.models.entities.Album;
+import com.example.EdufyMusic.models.entities.AlbumTrack;
 import com.example.EdufyMusic.models.entities.Song;
 import com.example.EdufyMusic.models.enums.MediaType;
 import com.example.EdufyMusic.repositories.SongRepository;
@@ -20,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -33,15 +38,19 @@ public class SongServiceImpl implements SongService {
 
     private final SongRepository songRepository;
 
+    // ED-237-SJ
+    private final AlbumService albumService;
+
     // ED-235-SJ
     private final CreatorClient creatorClient;
     private final GenreClient genreClient;
     private final ThumbClient thumbClient;
 
     @Autowired
-    public SongServiceImpl(SongRepository songRepository, CreatorClient creatorClient, GenreClient genreClient, ThumbClient thumbClient)
+    public SongServiceImpl(SongRepository songRepository, AlbumService albumService, CreatorClient creatorClient, GenreClient genreClient, ThumbClient thumbClient)
     {
         this.songRepository = songRepository;
+        this.albumService = albumService;
         this.creatorClient = creatorClient;
         this.genreClient = genreClient;
         this.thumbClient = thumbClient;
@@ -105,15 +114,50 @@ public class SongServiceImpl implements SongService {
                 .collect(Collectors.toList());
     }
 
+    // ED-237-SJ
+    // * - Checks if Album exist, if call comes from AlbumServiceImpl
+    // ** - redirected=true - SongServiceImpl won't create album since call is redirected from AlbumServiceImpl
     @Override
     @Transactional
-    public SongResponseDTO createSong(SongCreateDTO dto) {
+    public SongResponseDTO createSong(SongCreateDTO dto, boolean redirected) {
 
         if (dto == null) {throw new BadRequestException("Song", "body", "null");}
         if (dto.getTitle() == null || dto.getTitle().isBlank()) {throw new BadRequestException("Song", "title", String.valueOf(dto.getTitle()));}
         if (dto.getUrl() == null || dto.getUrl().isBlank()) {throw new BadRequestException("Song", "url", String.valueOf(dto.getUrl()));}
+        if (dto.getLength() == null) {throw new BadRequestException("Song", "length", "null");}
+        if (dto.getReleaseDate() == null) {throw new BadRequestException("Song", "releaseDate", "null");}
         if (dto.getGenreIds() == null || dto.getGenreIds().isEmpty()) {throw new BadRequestException("Song", "genreIds", String.valueOf(dto.getGenreIds()));}
         if (dto.getCreatorIds() == null || dto.getCreatorIds().isEmpty()) {throw new BadRequestException("Song", "creatorIds", String.valueOf(dto.getCreatorIds()));}
+
+        Long albumId = dto.getAlbumId();
+        Integer trackIndex = dto.getTrackIndex();
+
+        Album album;
+
+        // *
+        if (redirected) {
+
+            if (albumId == null) {throw new BadRequestException("Song", "albumId", "null");}
+            album = albumService.getAlbumEntityById(albumId);
+            if (trackIndex == null) {trackIndex = nextTrackIndex(album);}
+
+        } else {
+            if (albumId == null) {
+                AlbumCreateDTO albumDto = dto.getAlbum();
+                if (albumDto == null) {throw new BadRequestException("Song", "album", "null");}
+
+                // **
+                AlbumResponseDTO albumResp = albumService.createAlbum(albumDto, true);
+                albumId = albumResp.getId();
+                dto.setAlbumId(albumId);
+            }
+
+            album = albumService.getAlbumEntityById(albumId);
+
+            if (trackIndex == null) {
+                trackIndex = nextTrackIndex(album);
+            }
+        }
 
         Song song = new Song();
         song.setTitle(dto.getTitle());
@@ -124,13 +168,55 @@ public class SongServiceImpl implements SongService {
 
         song = songRepository.save(song);
 
-        //TODO: Call createAlbum & connect
+        AlbumTrack track = new AlbumTrack(album, song, trackIndex);
 
-        thumbClient.createRecordOfSong(song.getId(),song.getTitle());
-        genreClient.createRecordOfSong(song.getId(),dto.getGenreIds());
-        creatorClient.createRecordOfSong(song.getId(),dto.getCreatorIds());
+        album.getAlbumTracks().add(track);
+        song.getAlbumTracks().add(track);
 
-        return null;
+        album.setLength(calculateAlbumLength(album));
+
+        songRepository.save(song);
+
+        thumbClient.createRecordOfSong(song.getId(), song.getTitle());
+        genreClient.createRecordOfSong(song.getId(), dto.getGenreIds());
+        creatorClient.createRecordOfMusic(song.getId(), dto.getCreatorIds(), MediaType.SONG);
+
+        return SongResponseMapper.toDtoWithId(song);
+    }
+
+    // ED-237-SJ
+    private Integer nextTrackIndex(Album album) {
+        return album.getAlbumTracks().stream()
+                .map(AlbumTrack::getTrackIndex)
+                .filter(Objects::nonNull)
+                .max(Integer::compareTo)
+                .orElse(0) + 1;
+    }
+
+    // ED-237-SJ
+    private LocalTime calculateAlbumLength(Album album) {
+        long seconds = album.getAlbumTracks().stream()
+                .map(AlbumTrack::getSong)
+                .filter(Objects::nonNull)
+                .map(Song::getLength)
+                .filter(Objects::nonNull)
+                .mapToLong(LocalTime::toSecondOfDay)
+                .sum();
+
+        return LocalTime.ofSecondOfDay(seconds % (24 * 3600));
+    }
+
+    // ED-237-SJ
+    private List<Song> fetchSongsOrdered(List<Long> ids) {
+        List<Song> fetched = songRepository.findAllById(ids);
+
+        Map<Long, Song> byId = fetched.stream()
+                .collect(Collectors.toMap(Song::getId, Function.identity()));
+
+        return ids.stream()
+                .map(byId::get)
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     // ED-273-SJ
@@ -144,7 +230,6 @@ public class SongServiceImpl implements SongService {
 
         MicroMethodes.validateListNotEmpty(songIds, "List of SongIds by Genre");
 
-        // Client vill inte ha !isActive i sitt resultat.
         List<Song> songs = fetchSongsOrdered(songIds).stream()
                 .filter(Song::isActive)
                 .toList();
@@ -152,20 +237,6 @@ public class SongServiceImpl implements SongService {
         MicroMethodes.validateListNotEmpty(songs, "List of active Songs by Genre");
 
         return SongResponseMapper.toDtoListWithId(songs);
-    }
-
-
-    // ED-273-SJ - Hämtar Songs & behåller samma ordning
-    private List<Song> fetchSongsOrdered(List<Long> ids) {
-        List<Song> fetched = songRepository.findAllById(ids);
-
-        Map<Long, Song> byId = fetched.stream()
-                .collect(Collectors.toMap(Song::getId, Function.identity()));
-
-        return ids.stream()
-                .map(byId::get)
-                .filter(Objects::nonNull)
-                .toList();
     }
 
 

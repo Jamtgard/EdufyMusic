@@ -56,11 +56,11 @@ public class CreatorClient {
     }
 
     // ED-235-SJ
-    public boolean createRecordOfSong(Long mediaId, List<Long> creatorIds) {
+    public boolean createRecordOfMusic(Long mediaId, List<Long> creatorIds, MediaType mediaType) {
         try {
             ResponseEntity<Void> response = restClient.post()
                     .uri("/creator/media/record") // TODO Dubbelkolla om denna behöver "/creator"
-                    .body(new CreatorCreateRecordRequest(mediaId, MediaType.SONG, creatorIds))
+                    .body(new CreatorCreateRecordRequest(mediaId, mediaType, creatorIds))
                     .retrieve()
                     .toBodilessEntity();
 

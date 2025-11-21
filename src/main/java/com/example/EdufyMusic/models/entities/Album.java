@@ -15,7 +15,7 @@ public class Album {
 // Attributes ----------------------------------------------------------------------------------------------------------
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "album_id")
     private Long id;
 
