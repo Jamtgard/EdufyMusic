@@ -2,7 +2,7 @@ package com.example.EdufyMusic.clients;
 
 import com.example.EdufyMusic.exceptions.BadRequestException;
 import com.example.EdufyMusic.exceptions.RestClientException;
-import com.example.EdufyMusic.models.DTO.GenreDTO;
+import com.example.EdufyMusic.models.DTO.responses.GenreDTO;
 import com.example.EdufyMusic.models.DTO.requests.GenreCreateRecordRequest;
 import com.example.EdufyMusic.models.DTO.requests.SongsByGenreDTORequest;
 import com.example.EdufyMusic.models.enums.MediaType;

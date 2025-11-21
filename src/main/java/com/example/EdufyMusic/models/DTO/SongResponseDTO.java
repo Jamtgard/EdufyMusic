@@ -1,5 +1,7 @@
 package com.example.EdufyMusic.models.DTO;
 
+import com.example.EdufyMusic.models.DTO.responses.CreatorDTO;
+import com.example.EdufyMusic.models.DTO.responses.GenreDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.time.LocalDate;
