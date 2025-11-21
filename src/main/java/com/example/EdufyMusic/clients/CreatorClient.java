@@ -2,11 +2,12 @@ package com.example.EdufyMusic.clients;
 
 import com.example.EdufyMusic.exceptions.BadRequestException;
 import com.example.EdufyMusic.exceptions.RestClientException;
-import com.example.EdufyMusic.models.DTO.CreatorDTO;
-import com.example.EdufyMusic.models.DTO.MusicByCreatorDTO;
+import com.example.EdufyMusic.models.DTO.responses.CreatorDTO;
 import com.example.EdufyMusic.models.DTO.requests.CreatorCreateRecordRequest;
+import com.example.EdufyMusic.models.DTO.responses.MediaIdDTO;
 import com.example.EdufyMusic.models.enums.MediaType;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
@@ -75,15 +76,21 @@ public class CreatorClient {
     }
 
     // ED-51-SJ
-    public MusicByCreatorDTO getMusicByCreator(Long creatorId) {
+    public List getMusicByCreator(Long creatorId, MediaType mediaType) {
         try {
-            ResponseEntity<MusicByCreatorDTO> response = restClient.get()
+            ResponseEntity<List<MediaIdDTO>> response = restClient.get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/creator/media-by-creator/{creatorId}")
-                            .build(creatorId))
+                            .path("/mediabycreator/{creatorId}/{mediaType}")
+                            .build(creatorId, mediaType))
                     .retrieve()
-                    .toEntity(MusicByCreatorDTO.class);
-            return response.getBody();
+                    .toEntity(new ParameterizedTypeReference<List<MediaIdDTO>>() {});
+
+            List<MediaIdDTO> body = response.getBody();
+            if (body == null) return List.of();
+
+            return body.stream()
+                    .map(MediaIdDTO::getMediaId)
+                    .toList();
 
         } catch (RestClientResponseException e) {
             throw new BadRequestException("Creator Service Error: " + e.getResponseBodyAsString());

@@ -1,4 +1,4 @@
-package com.example.EdufyMusic.models.DTO;
+package com.example.EdufyMusic.models.DTO.responses;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

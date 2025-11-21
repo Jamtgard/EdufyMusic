@@ -2,7 +2,7 @@ package com.example.EdufyMusic.models.DTO.mappers;
 
 import com.example.EdufyMusic.clients.GenreClient;
 import com.example.EdufyMusic.exceptions.NoContentException;
-import com.example.EdufyMusic.models.DTO.GenreDTO;
+import com.example.EdufyMusic.models.DTO.responses.GenreDTO;
 import com.example.EdufyMusic.models.entities.Song;
 import com.example.EdufyMusic.models.enums.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;

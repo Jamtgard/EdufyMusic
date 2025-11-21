@@ -2,7 +2,7 @@ package com.example.EdufyMusic.models.DTO.mappers;
 
 import com.example.EdufyMusic.clients.CreatorClient;
 import com.example.EdufyMusic.exceptions.NoContentException;
-import com.example.EdufyMusic.models.DTO.CreatorDTO;
+import com.example.EdufyMusic.models.DTO.responses.CreatorDTO;
 import com.example.EdufyMusic.models.entities.Album;
 import com.example.EdufyMusic.models.entities.Song;
 import com.example.EdufyMusic.models.enums.MediaType;
