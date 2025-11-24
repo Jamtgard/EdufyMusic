@@ -1,6 +1,7 @@
 package com.example.EdufyMusic.controllers;
 
 import com.example.EdufyMusic.models.DTO.AlbumResponseDTO;
+import com.example.EdufyMusic.models.DTO.PlayedSongDTO;
 import com.example.EdufyMusic.models.DTO.SongResponseDTO;
 import com.example.EdufyMusic.services.AlbumService;
 import com.example.EdufyMusic.services.SongService;
@@ -39,6 +40,12 @@ public class UserController {
     @GetMapping("/album/search")
     public ResponseEntity<List<AlbumResponseDTO>> getAlbumByTitle (@RequestParam String title, Authentication authentication) {
         return ResponseEntity.ok(albumService.getAlbumsByTitle(title, authentication));
+    }
+
+    // ED-253-SJ
+    @GetMapping("/play/{songId}")
+    public ResponseEntity<PlayedSongDTO> playSong(@PathVariable Long songId, Authentication authentication) {
+        return ResponseEntity.ok(songService.playSong(songId, authentication));
     }
 
 }

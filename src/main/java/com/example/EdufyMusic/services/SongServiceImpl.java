@@ -3,13 +3,11 @@ package com.example.EdufyMusic.services;
 import com.example.EdufyMusic.clients.CreatorClient;
 import com.example.EdufyMusic.clients.GenreClient;
 import com.example.EdufyMusic.clients.ThumbClient;
+import com.example.EdufyMusic.clients.UserClient;
 import com.example.EdufyMusic.converters.Roles;
 import com.example.EdufyMusic.exceptions.BadRequestException;
 import com.example.EdufyMusic.exceptions.ResourceNotFoundException;
-import com.example.EdufyMusic.models.DTO.AlbumCreateDTO;
-import com.example.EdufyMusic.models.DTO.AlbumResponseDTO;
-import com.example.EdufyMusic.models.DTO.SongCreateDTO;
-import com.example.EdufyMusic.models.DTO.SongResponseDTO;
+import com.example.EdufyMusic.models.DTO.*;
 import com.example.EdufyMusic.models.DTO.mappers.SongResponseMapper;
 import com.example.EdufyMusic.models.DTO.requests.SongsByGenreDTORequest;
 import com.example.EdufyMusic.models.entities.Album;
@@ -45,15 +43,17 @@ public class SongServiceImpl implements SongService {
     private final CreatorClient creatorClient;
     private final GenreClient genreClient;
     private final ThumbClient thumbClient;
+    private final UserClient userClient;
 
     @Autowired
-    public SongServiceImpl(SongRepository songRepository, AlbumService albumService, CreatorClient creatorClient, GenreClient genreClient, ThumbClient thumbClient)
+    public SongServiceImpl(SongRepository songRepository, AlbumService albumService, CreatorClient creatorClient, GenreClient genreClient, ThumbClient thumbClient, UserClient userClient)
     {
         this.songRepository = songRepository;
         this.albumService = albumService;
         this.creatorClient = creatorClient;
         this.genreClient = genreClient;
         this.thumbClient = thumbClient;
+        this.userClient = userClient;
     }
 
     // ED-74-SJ
@@ -237,6 +237,24 @@ public class SongServiceImpl implements SongService {
         MicroMethodes.validateListNotEmpty(songs, "List of active Songs by Genre");
 
         return SongResponseMapper.toDtoListWithId(songs);
+    }
+
+    // ED-253-SJ
+    @Override
+    public PlayedSongDTO playSong(Long songId, Authentication authentication) {
+
+        UserDTO userDTO = userClient.getUserBySUB(authentication.getName());
+        if (userDTO == null) {throw new ResourceNotFoundException("User", "id", authentication.getName());}
+
+        Song song = songRepository.findByIdAndActiveTrue(songId);
+        if (song == null) {throw new ResourceNotFoundException("Song", "id", authentication.getName());}
+
+        Long currentTimesPlayed = song.getUserHistory().get(userDTO.getId());
+        Long increasedTimesPlayed = currentTimesPlayed + 1;
+        song.getUserHistory().put(userDTO.getId(), increasedTimesPlayed);
+        songRepository.save(song);
+
+        return new PlayedSongDTO(song.getUrl());
     }
 
 
