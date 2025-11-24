@@ -36,5 +36,8 @@ public interface SongRepository extends JpaRepository<Song, Long> {
     @Query("SELECT s.id FROM Song s JOIN s.userHistory h WHERE KEY(h) = :userId")
     List<Long> findSongIdsByUserIdInHistory(@Param("userId") Long userId);
 
+    // ED-253-SJ
+    Song findByIdAndActiveTrue(Long id);
+
 
 }
