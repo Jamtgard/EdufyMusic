@@ -36,7 +36,7 @@ public class CreatorClient {
         try{
             ResponseEntity<CreatorDTO[]> response = restClient.get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/creator/creators-mediaid") // TODO Dubbelkolla om denna behöver "/creator"
+                            .path("/creators-mediaid")
                             .queryParam("mediaType", mediaType)
                             .queryParam("id", mediaId)
                             .build())
@@ -59,7 +59,7 @@ public class CreatorClient {
     public boolean createRecordOfMusic(Long mediaId, List<Long> creatorIds, MediaType mediaType) {
         try {
             ResponseEntity<Void> response = restClient.post()
-                    .uri("/creator/media/record") // TODO Dubbelkolla om denna behöver "/creator"
+                    .uri("/media/record")
                     .body(new CreatorCreateRecordRequest(mediaId, mediaType, creatorIds))
                     .retrieve()
                     .toBodilessEntity();

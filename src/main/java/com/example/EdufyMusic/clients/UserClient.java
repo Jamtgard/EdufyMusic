@@ -28,7 +28,7 @@ public class UserClient {
         try {
             ResponseEntity<UserDTO> response = restClient.get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/user/user-id/{id}/clientcall")
+                            .path("/user-id/{id}/clientcall")
                             .build(id))
                     .retrieve()
                     .toEntity(UserDTO.class);
@@ -50,7 +50,7 @@ public class UserClient {
         try {
             ResponseEntity<UserDTO> response = restClient.get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/user/user-sub/{sub}/clientcall")
+                            .path("/user-sub/{sub}/clientcall")
                             .build(sub))
                     .retrieve()
                     .toEntity(UserDTO.class);
