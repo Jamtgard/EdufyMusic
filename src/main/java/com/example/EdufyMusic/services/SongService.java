@@ -22,7 +22,7 @@ public interface SongService {
     List<SongResponseDTO> getUserHistory(Long userId);
 
     // ED-235-Sj
-    SongResponseDTO createSong(SongCreateDTO dto);
+    SongResponseDTO createSong(SongCreateDTO dto, boolean redirected);
 
     // ED-273-SJ
     List<SongResponseDTO> getSongsByGenre(Long genreId);

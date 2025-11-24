@@ -6,7 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 // ED-75-SJ
 @Repository
@@ -33,5 +35,8 @@ public interface AlbumRepository extends JpaRepository<Album, Long> {
 
     // ED-262-SJ
     List<Album> findByTitleContainingIgnoreCase(String title);
+
+    // ED-237-SJ
+    Optional<Album> findFirstByTitleIgnoreCaseAndReleaseDateAndUrl(String title, LocalDate releaseDate, String url);
 
 }

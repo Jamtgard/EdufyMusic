@@ -1,7 +1,9 @@
 package com.example.EdufyMusic.models.DTO;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -13,17 +15,19 @@ public class SongCreateDTO {
 
     @NotBlank private String url;
 
-    @NotEmpty private LocalTime length;
+    @NotNull  private LocalTime length;
 
-    @NotEmpty private LocalDate releaseDate;
+    @NotNull private LocalDate releaseDate;
 
-    @NotEmpty private Long albumId;
+    private Long albumId;
 
-    @NotEmpty private Integer trackIndex;
+    private Integer trackIndex;
 
-    @NotEmpty private List<Long> creatorIds;
+    @Valid  private List<Long> creatorIds;
 
-    @NotEmpty private List<Long> genreIds;
+    @Valid private List<Long> genreIds;
+
+    @Valid private AlbumCreateDTO album;
 
     private boolean active;
 
@@ -51,6 +55,9 @@ public class SongCreateDTO {
     public List<Long> getGenreIds() {return genreIds;}
     public void setGenreIds(List<Long> genreIds) {this.genreIds = genreIds;}
 
+    public AlbumCreateDTO getAlbum() {return album;}
+    public void setAlbum(AlbumCreateDTO album) {this.album = album;}
+
     public boolean isActive() {return active;}
     public void setActive(boolean active) {this.active = active;}
 
@@ -65,6 +72,7 @@ public class SongCreateDTO {
                 ", trackIndex=" + trackIndex +
                 ", creatorId=" + creatorIds +
                 ", genreIds=" + genreIds +
+                ", album=" + album +
                 ", active=" + active +
                 '}';
     }
