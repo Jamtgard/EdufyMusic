@@ -34,7 +34,7 @@ public class GenreClient {
         try {
             ResponseEntity<GenreDTO[]> response = restClient.get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/genre/by/media-id/{mediaType}/{mediaId}") // TODO Dubbelkolla om denna behöver "/genre"
+                            .path("/by/media-id/{mediaType}/{mediaId}")
                             .build(mediaType, mediaId))
                     .retrieve()
                     .toEntity(GenreDTO[].class);
@@ -55,7 +55,7 @@ public class GenreClient {
     public boolean createRecordOfSong(Long mediaId, List<Long> genreIds){
         try {
             ResponseEntity<Void> response = restClient.post()
-                    .uri("/genre/media/record") // TODO Dubbelkolla om denna behöver "/genre"
+                    .uri("/media/record")
                     .body(new GenreCreateRecordRequest(mediaId, MediaType.SONG, genreIds))
                     .retrieve()
                     .toBodilessEntity();
@@ -76,7 +76,7 @@ public class GenreClient {
         try {
             ResponseEntity<SongsByGenreDTORequest> response = restClient.get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/genre/{genreId}/media/by-type/{mediaType}")
+                            .path("/{genreId}/media/by-type/{mediaType}")
                             .build(genreId, mediaType))
                     .retrieve()
                     .toEntity(SongsByGenreDTORequest.class);

@@ -27,7 +27,7 @@ public class ThumbClient {
     public boolean createRecordOfSong(Long mediaId, String mediaName) {
         try {
             ResponseEntity<Void> response = restClient.post()
-                    .uri("/api/v1/thumb/media/record")
+                    .uri("/media/record")
                     .body(new ThumbCreateRecordRequest(mediaId,MediaType.SONG, mediaName))
                     .retrieve()
                     .toBodilessEntity();
