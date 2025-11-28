@@ -8,6 +8,7 @@ import com.example.EdufyMusic.models.DTO.responses.MediaIdDTO;
 import com.example.EdufyMusic.models.enums.MediaType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
@@ -23,11 +24,13 @@ import java.util.List;
 public class CreatorClient {
 
     private final RestClient restClient;
+    private final Keycloak keycloak;
 
-    public CreatorClient(RestClient.Builder builder, @Value("${creator.service.url}") String creatorServiceUrl) {
-        this.restClient = builder
-                .baseUrl(creatorServiceUrl)
-                .build();
+    public CreatorClient(RestClient.Builder builder,
+                         @Value("${creator.service.url}") String creatorServiceUrl,
+                         Keycloak keycloak) {
+        this.restClient = builder.baseUrl(creatorServiceUrl).build();
+        this.keycloak = keycloak;
     }
 
     // ED-235-SJ Reworked to wrap in try{}
@@ -40,6 +43,7 @@ public class CreatorClient {
                             .queryParam("mediaType", mediaType)
                             .queryParam("id", mediaId)
                             .build())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + keycloak.getAccessToken())
                     .retrieve()
                     .toEntity(CreatorDTO[].class);
 
@@ -61,6 +65,7 @@ public class CreatorClient {
             ResponseEntity<Void> response = restClient.post()
                     .uri("/media/record")
                     .body(new CreatorCreateRecordRequest(mediaId, mediaType, creatorIds))
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + keycloak.getAccessToken())
                     .retrieve()
                     .toBodilessEntity();
 
@@ -82,6 +87,7 @@ public class CreatorClient {
                     .uri(uriBuilder -> uriBuilder
                             .path("/mediabycreator/{creatorId}/{mediaType}")
                             .build(creatorId, mediaType))
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + keycloak.getAccessToken())
                     .retrieve()
                     .toEntity(new ParameterizedTypeReference<List<MediaIdDTO>>() {});
 
