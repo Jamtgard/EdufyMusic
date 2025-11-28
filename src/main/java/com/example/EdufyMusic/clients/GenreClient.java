@@ -7,7 +7,6 @@ import com.example.EdufyMusic.models.DTO.requests.GenreCreateRecordRequest;
 import com.example.EdufyMusic.models.DTO.requests.SongsByGenreDTORequest;
 import com.example.EdufyMusic.models.enums.MediaType;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
