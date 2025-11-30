@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/music")
-@PreAuthorize("hasAnyAuthority('music_admin','edufy_realm_admin')")
+@PreAuthorize("hasAnyRole('music_admin', 'edufy_realm_admin')")
 public class AdminController {
 
     // ED-278-SJ

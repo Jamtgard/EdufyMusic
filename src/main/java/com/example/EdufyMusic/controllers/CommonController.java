@@ -7,6 +7,7 @@ import com.example.EdufyMusic.services.AlbumService;
 import com.example.EdufyMusic.services.MusicService;
 import com.example.EdufyMusic.services.SongService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,7 @@ import java.util.List;
 // ED-80-SJ
 @RestController
 @RequestMapping("/music")
+@PreAuthorize("hasAnyRole('music_user', 'music_admin','edufy_realm_admin')")
 public class CommonController {
 
     private final SongService songService;

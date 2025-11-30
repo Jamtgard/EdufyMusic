@@ -14,6 +14,7 @@ import com.example.EdufyMusic.models.entities.Album;
 import com.example.EdufyMusic.models.entities.AlbumTrack;
 import com.example.EdufyMusic.models.entities.Song;
 import com.example.EdufyMusic.models.enums.MediaType;
+import com.example.EdufyMusic.repositories.AlbumTrackRepository;
 import com.example.EdufyMusic.repositories.SongRepository;
 import com.example.EdufyMusic.utilities.MicroMethodes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,9 @@ public class SongServiceImpl implements SongService {
 
     private final SongRepository songRepository;
 
+    // ED-309-SJ
+    private final AlbumTrackRepository albumTrackRepository;
+
     // ED-237-SJ
     private final AlbumService albumService;
 
@@ -46,9 +50,10 @@ public class SongServiceImpl implements SongService {
     private final UserClient userClient;
 
     @Autowired
-    public SongServiceImpl(SongRepository songRepository, AlbumService albumService, CreatorClient creatorClient, GenreClient genreClient, ThumbClient thumbClient, UserClient userClient)
+    public SongServiceImpl(SongRepository songRepository, AlbumTrackRepository albumTrackRepository,AlbumService albumService, CreatorClient creatorClient, GenreClient genreClient, ThumbClient thumbClient, UserClient userClient)
     {
         this.songRepository = songRepository;
+        this.albumTrackRepository = albumTrackRepository;
         this.albumService = albumService;
         this.creatorClient = creatorClient;
         this.genreClient = genreClient;
@@ -167,6 +172,13 @@ public class SongServiceImpl implements SongService {
         song.setActive(dto.isActive());
 
         song = songRepository.save(song);
+
+        if (albumTrackRepository.existsByAlbum_IdAndSong_Id(album.getId(), song.getId())) {
+            return SongResponseMapper.toDtoWithId(song);
+        }
+        if (albumTrackRepository.existsByAlbum_IdAndTrackIndex(album.getId(), trackIndex)) {
+            trackIndex = nextTrackIndex(albumService.getAlbumEntityById(album.getId()));
+        }
 
         AlbumTrack track = new AlbumTrack(album, song, trackIndex);
 

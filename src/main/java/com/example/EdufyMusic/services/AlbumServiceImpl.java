@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -96,6 +97,7 @@ public class AlbumServiceImpl implements AlbumService {
     // ** - Checks if album already exists, if so = no creation of new entity. Existing entity will be used.
     // *** - Call is not redirected from songServiceImpl - create all songs contained in AlbumCreateDTO dto.
     @Override
+    @Transactional
     public AlbumResponseDTO createAlbum(AlbumCreateDTO dto, boolean redirected) {
 
         if (dto == null) throw new BadRequestException("Album", "body", "null");
@@ -129,8 +131,6 @@ public class AlbumServiceImpl implements AlbumService {
 
             album = albumRepository.save(album);
 
-
-            creatorClient.createRecordOfMusic(album.getId(), dto.getCreatorIds(), MediaType.SONG);
             creatorClient.createRecordOfMusic(album.getId(), dto.getCreatorIds(), MediaType.ALBUM);
 
             return AlbumResponseMapper.toDtoWithId(album);
@@ -146,16 +146,20 @@ public class AlbumServiceImpl implements AlbumService {
 
         album = albumRepository.save(album);
 
-        creatorClient.createRecordOfMusic(album.getId(), dto.getCreatorIds(), MediaType.ALBUM);
-
         // ***
         int index = 1;
         for (SongCreateDTO songDto : dto.getSongs()) {
+            if (songDto.getCreatorIds() == null || songDto.getCreatorIds().isEmpty()) {
+                songDto.setCreatorIds(dto.getCreatorIds());
+            }
+
             songDto.setAlbumId(album.getId());
             songDto.setTrackIndex(index++);
 
             songService.createSong(songDto, true);
         }
+
+        creatorClient.createRecordOfMusic(album.getId(), dto.getCreatorIds(), MediaType.ALBUM);
 
         return AlbumResponseMapper.toDtoWithId(album);
     }
