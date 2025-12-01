@@ -5,6 +5,7 @@ import com.example.EdufyMusic.exceptions.RestClientException;
 import com.example.EdufyMusic.models.DTO.requests.ThumbCreateRecordRequest;
 import com.example.EdufyMusic.models.enums.MediaType;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
@@ -17,11 +18,13 @@ import org.springframework.web.client.RestClientResponseException;
 public class ThumbClient {
 
     private final RestClient restClient;
+    private final Keycloak keycloak;
 
-    public ThumbClient(RestClient.Builder builder, @Value("${thumb.service.url}") String thumbServiceUrl) {
-        this.restClient = builder
-                .baseUrl(thumbServiceUrl)
-                .build();
+    public ThumbClient(RestClient.Builder builder,
+                       @Value("${thumb.service.url}") String thumbServiceUrl,
+                       Keycloak keycloak) {
+        this.restClient = builder.baseUrl(thumbServiceUrl).build();
+        this.keycloak = keycloak;
     }
 
     public boolean createRecordOfSong(Long mediaId, String mediaName) {
@@ -29,6 +32,7 @@ public class ThumbClient {
             ResponseEntity<Void> response = restClient.post()
                     .uri("/media/record")
                     .body(new ThumbCreateRecordRequest(mediaId,MediaType.SONG, mediaName))
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + keycloak.getAccessToken())
                     .retrieve()
                     .toBodilessEntity();
 

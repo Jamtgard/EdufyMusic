@@ -14,7 +14,7 @@ public class AlbumTrack {
 // Attributes ----------------------------------------------------------------------------------------------------------
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "album_track_id")
     private Long id;
 

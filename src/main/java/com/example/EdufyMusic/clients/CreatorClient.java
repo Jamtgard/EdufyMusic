@@ -62,7 +62,7 @@ public class CreatorClient {
     // ED-235-SJ
     public boolean createRecordOfMusic(Long mediaId, List<Long> creatorIds, MediaType mediaType) {
         try {
-            ResponseEntity<Void> response = restClient.post()
+            ResponseEntity<Void> response = restClient.put()
                     .uri("/media/record")
                     .body(new CreatorCreateRecordRequest(mediaId, mediaType, creatorIds))
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + keycloak.getAccessToken())

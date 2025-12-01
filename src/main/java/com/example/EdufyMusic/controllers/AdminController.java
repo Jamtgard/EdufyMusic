@@ -5,26 +5,31 @@ import com.example.EdufyMusic.models.DTO.AlbumResponseDTO;
 import com.example.EdufyMusic.models.DTO.SongCreateDTO;
 import com.example.EdufyMusic.models.DTO.SongResponseDTO;
 import com.example.EdufyMusic.services.AlbumService;
+import com.example.EdufyMusic.services.MusicService;
 import com.example.EdufyMusic.services.SongService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/music")
-@PreAuthorize("hasAnyAuthority('music_admin','edufy_realm_admin')")
+@PreAuthorize("hasAnyRole('music_admin', 'edufy_realm_admin')")
 public class AdminController {
 
     // ED-278-SJ
     private final SongService songService;
     private final AlbumService albumService;
+    private final MusicService musicService;
 
     // ED-278-SJ
-    public AdminController(SongService songService, AlbumService albumService)
+    @Autowired
+    public AdminController(SongService songService, AlbumService albumService, MusicService musicService)
     {
         this.songService = songService;
         this.albumService = albumService;
+        this.musicService = musicService;
     }
 
 
@@ -43,12 +48,12 @@ public class AdminController {
     // ED-235-SJ
     @PostMapping("/add-song")
     public ResponseEntity<SongResponseDTO> createSong(@Valid @RequestBody SongCreateDTO dto){
-        return ResponseEntity.ok(songService.createSong(dto, false));
+        return ResponseEntity.status(201).body(musicService.addSong(dto));
     }
 
     // ED-237-SJ
     @PostMapping("/add-album")
     public ResponseEntity<AlbumResponseDTO> createAlbum(@Valid @RequestBody AlbumCreateDTO dto){
-        return ResponseEntity.status(201).body(albumService.createAlbum(dto, false));
+        return ResponseEntity.status(201).body(musicService.addAlbum(dto));
     }
 }
