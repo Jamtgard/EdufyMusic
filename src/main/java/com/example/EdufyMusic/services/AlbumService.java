@@ -19,11 +19,5 @@ public interface AlbumService {
     // ED-81-SJ
     List<AlbumResponseDTO> getAllAlbums(Authentication authentication);
 
-    // ED-237-SJ
-    AlbumResponseDTO createAlbum(AlbumCreateDTO dto, boolean redirected);
-
-    // ED-237-SJ
-    Album getAlbumEntityById(Long id);
-
 
 }

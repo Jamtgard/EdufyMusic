@@ -75,36 +75,36 @@ public class SongServiceImpl implements SongService {
     @Override
     public List<SongResponseDTO> findSongByTitle(String title, Authentication authentication) {
 
-        List<Song> allSongsByTitle;
         List<String> roles = Roles.getRoles(authentication);
+        boolean isAdmin = roles.contains("music_admin") || roles.contains("edufy_realm_admin");
 
-        if (roles.contains("music_admin") || roles.contains("edufy_realm_admin")) {
-            allSongsByTitle = songRepository.findByTitleContainingIgnoreCase(title);
-            MicroMethodes.validateListNotEmpty(allSongsByTitle, "List of Songs by title");
-            return SongResponseMapper.toDtoListWithId(allSongsByTitle);
-        } else {
-            allSongsByTitle = songRepository.findByTitleContainingIgnoreCaseAndActiveIsTrue(title);
-            MicroMethodes.validateListNotEmpty(allSongsByTitle, "List of Songs by title");
-            return SongResponseMapper.toDtoListNoId(allSongsByTitle);
-        }
+        List<Song> songs = isAdmin
+                ? songRepository.findByTitleContainingIgnoreCase(title)
+                : songRepository.findByTitleContainingIgnoreCaseAndActiveIsTrue(title);
+
+        MicroMethodes.validateListNotEmpty(songs, "List of Songs by title");
+
+        return isAdmin
+                ? SongResponseMapper.toDtoListWithId(songs)
+                : SongResponseMapper.toDtoListNoId(songs);
     }
 
     // ED-80-SJ
     @Override
     public List<SongResponseDTO> getAllSongs(Authentication authentication) {
 
-        List<Song> allSongs;
         List<String> roles = Roles.getRoles(authentication);
+        boolean isAdmin = roles.contains("music_admin") || roles.contains("edufy_realm_admin");
 
-        if (roles.contains("music_admin") || roles.contains("edufy_realm_admin")) {
-            allSongs = songRepository.findAll();
-            MicroMethodes.validateListNotEmpty(allSongs, "List of all Songs");
-            return SongResponseMapper.toDtoListWithId(allSongs);
-        } else {
-            allSongs = songRepository.findAllByActiveTrue();
-            MicroMethodes.validateListNotEmpty(allSongs, "List of all Songs");
-            return SongResponseMapper.toDtoListNoId(allSongs);
-        }
+        List<Song> songs = isAdmin
+                ? songRepository.findAll()
+                : songRepository.findAllByActiveTrue();
+
+        MicroMethodes.validateListNotEmpty(songs, "List of all Songs");
+
+        return isAdmin
+                ? SongResponseMapper.toDtoListWithId(songs)
+                : SongResponseMapper.toDtoListNoId(songs);
     }
 
     @Override
@@ -117,105 +117,6 @@ public class SongServiceImpl implements SongService {
         return songsInUserHistory.stream()
                 .map(SongResponseMapper::toDtoClientOnlyId)
                 .collect(Collectors.toList());
-    }
-
-    // ED-237-SJ
-    // * - Checks if Album exist, if call comes from AlbumServiceImpl
-    // ** - redirected=true - SongServiceImpl won't create album since call is redirected from AlbumServiceImpl
-    @Override
-    @Transactional
-    public SongResponseDTO createSong(SongCreateDTO dto, boolean redirected) {
-
-        if (dto == null) {throw new BadRequestException("Song", "body", "null");}
-        if (dto.getTitle() == null || dto.getTitle().isBlank()) {throw new BadRequestException("Song", "title", String.valueOf(dto.getTitle()));}
-        if (dto.getUrl() == null || dto.getUrl().isBlank()) {throw new BadRequestException("Song", "url", String.valueOf(dto.getUrl()));}
-        if (dto.getLength() == null) {throw new BadRequestException("Song", "length", "null");}
-        if (dto.getReleaseDate() == null) {throw new BadRequestException("Song", "releaseDate", "null");}
-        if (dto.getGenreIds() == null || dto.getGenreIds().isEmpty()) {throw new BadRequestException("Song", "genreIds", String.valueOf(dto.getGenreIds()));}
-        if (dto.getCreatorIds() == null || dto.getCreatorIds().isEmpty()) {throw new BadRequestException("Song", "creatorIds", String.valueOf(dto.getCreatorIds()));}
-
-        Long albumId = dto.getAlbumId();
-        Integer trackIndex = dto.getTrackIndex();
-
-        Album album;
-
-        // *
-        if (redirected) {
-
-            if (albumId == null) {throw new BadRequestException("Song", "albumId", "null");}
-            album = albumService.getAlbumEntityById(albumId);
-            if (trackIndex == null) {trackIndex = nextTrackIndex(album);}
-
-        } else {
-            if (albumId == null) {
-                AlbumCreateDTO albumDto = dto.getAlbum();
-                if (albumDto == null) {throw new BadRequestException("Song", "album", "null");}
-
-                // **
-                AlbumResponseDTO albumResp = albumService.createAlbum(albumDto, true);
-                albumId = albumResp.getId();
-                dto.setAlbumId(albumId);
-            }
-
-            album = albumService.getAlbumEntityById(albumId);
-
-            if (trackIndex == null) {
-                trackIndex = nextTrackIndex(album);
-            }
-        }
-
-        Song song = new Song();
-        song.setTitle(dto.getTitle());
-        song.setUrl(dto.getUrl());
-        song.setLength(dto.getLength());
-        song.setReleaseDate(dto.getReleaseDate());
-        song.setActive(dto.isActive());
-
-        song = songRepository.save(song);
-
-        if (albumTrackRepository.existsByAlbum_IdAndSong_Id(album.getId(), song.getId())) {
-            return SongResponseMapper.toDtoWithId(song);
-        }
-        if (albumTrackRepository.existsByAlbum_IdAndTrackIndex(album.getId(), trackIndex)) {
-            trackIndex = nextTrackIndex(albumService.getAlbumEntityById(album.getId()));
-        }
-
-        AlbumTrack track = new AlbumTrack(album, song, trackIndex);
-
-        album.getAlbumTracks().add(track);
-        song.getAlbumTracks().add(track);
-
-        album.setLength(calculateAlbumLength(album));
-
-        songRepository.save(song);
-
-        thumbClient.createRecordOfSong(song.getId(), song.getTitle());
-        genreClient.createRecordOfSong(song.getId(), dto.getGenreIds());
-        creatorClient.createRecordOfMusic(song.getId(), dto.getCreatorIds(), MediaType.SONG);
-
-        return SongResponseMapper.toDtoWithId(song);
-    }
-
-    // ED-237-SJ
-    private Integer nextTrackIndex(Album album) {
-        return album.getAlbumTracks().stream()
-                .map(AlbumTrack::getTrackIndex)
-                .filter(Objects::nonNull)
-                .max(Integer::compareTo)
-                .orElse(0) + 1;
-    }
-
-    // ED-237-SJ
-    private LocalTime calculateAlbumLength(Album album) {
-        long seconds = album.getAlbumTracks().stream()
-                .map(AlbumTrack::getSong)
-                .filter(Objects::nonNull)
-                .map(Song::getLength)
-                .filter(Objects::nonNull)
-                .mapToLong(LocalTime::toSecondOfDay)
-                .sum();
-
-        return LocalTime.ofSecondOfDay(seconds % (24 * 3600));
     }
 
     // ED-237-SJ

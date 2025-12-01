@@ -49,9 +49,6 @@ public class AlbumServiceImpl implements AlbumService {
         Album album = albumRepository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException("Album", "id", id)
         );
-
-        // TODO hämta creatorUsernames via albumCreatorIds
-
         return AlbumResponseMapper.toDtoWithId(album);
     }
 
@@ -60,113 +57,35 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public List<AlbumResponseDTO> getAlbumsByTitle(String title, Authentication authentication) {
 
-        List<Album> allAlbumsByTitle;
         List<String> roles = Roles.getRoles(authentication);
+        boolean isAdmin = roles.contains("music_admin") || roles.contains("edufy_realm_admin");
 
-        if (roles.contains("music_admin") || roles.contains("edufy_realm_admin")) {
-            allAlbumsByTitle = albumRepository.findByTitleContainingIgnoreCase(title);
-            MicroMethodes.validateListNotEmpty(allAlbumsByTitle, "List of Albums by title");
-            return AlbumResponseMapper.toDtoListWithId(allAlbumsByTitle);
-        } else {
-            allAlbumsByTitle = albumRepository.findByTitleContainingIgnoreCaseAndActiveIsTrue(title);
-            MicroMethodes.validateListNotEmpty(allAlbumsByTitle, "List of Albums by title");
-            return AlbumResponseMapper.toDtoListNoId(allAlbumsByTitle);
-        }
+        List<Album> albums = isAdmin
+                ? albumRepository.findByTitleContainingIgnoreCase(title)
+                : albumRepository.findByTitleContainingIgnoreCaseAndActiveIsTrue(title);
+
+        MicroMethodes.validateListNotEmpty(albums, "List of Albums by title");
+
+        return isAdmin
+                ? AlbumResponseMapper.toDtoListWithId(albums)
+                : AlbumResponseMapper.toDtoListNoId(albums);
     }
 
     // ED-81-SJ
     @Override
     public List<AlbumResponseDTO> getAllAlbums(Authentication authentication) {
 
-        List<Album> allAlbums;
         List<String> roles = Roles.getRoles(authentication);
+        boolean isAdmin = roles.contains("music_admin") || roles.contains("edufy_realm_admin");
 
-        if (roles.contains("music_admin") || roles.contains("edufy_realm_admin")) {
-            allAlbums = albumRepository.findAll();
-            MicroMethodes.validateListNotEmpty(allAlbums, "List of all Albums");
-            return AlbumResponseMapper.toDtoListWithId(allAlbums);
-        } else {
-            allAlbums = albumRepository.findAllByActiveTrue();
-            MicroMethodes.validateListNotEmpty(allAlbums, "List of all Albums");
-            return AlbumResponseMapper.toDtoListNoId(allAlbums);
-        }
-    }
+        List<Album> albums = isAdmin
+                ? albumRepository.findAll()
+                : albumRepository.findAllByActiveTrue();
 
-    // ED-237-SJ
-    // * - Checks if call comes from SongServiceImpl. Both entity calls each other, this is to stop endless loop.
-    // ** - Checks if album already exists, if so = no creation of new entity. Existing entity will be used.
-    // *** - Call is not redirected from songServiceImpl - create all songs contained in AlbumCreateDTO dto.
-    @Override
-    @Transactional
-    public AlbumResponseDTO createAlbum(AlbumCreateDTO dto, boolean redirected) {
+        MicroMethodes.validateListNotEmpty(albums, "List of all Albums");
 
-        if (dto == null) throw new BadRequestException("Album", "body", "null");
-        if (dto.getTitle() == null || dto.getTitle().isBlank()) throw new BadRequestException("Album", "title", String.valueOf(dto.getTitle()));
-        if (dto.getUrl() == null || dto.getUrl().isBlank()) throw new BadRequestException("Album", "url", String.valueOf(dto.getUrl()));
-        if (dto.getReleaseDate() == null) throw new BadRequestException("Album", "releaseDate", "null");
-        if (dto.getCreatorIds() == null || dto.getCreatorIds().isEmpty()) throw new BadRequestException("Album", "creatorIds", String.valueOf(dto.getCreatorIds()));
-
-        if (!redirected && (dto.getSongs() == null || dto.getSongs().isEmpty())) throw new BadRequestException("Album", "songs", "empty");
-
-        // *
-        if (redirected) {
-
-            Optional<Album> existing = albumRepository
-                    .findFirstByTitleIgnoreCaseAndReleaseDateAndUrl(
-                            dto.getTitle(), dto.getReleaseDate(), dto.getUrl()
-                    );
-
-            // **
-            if (existing.isPresent()) {
-                return AlbumResponseMapper.toDtoWithId(existing.get());
-            }
-
-            Album album = new Album();
-            album.setTitle(dto.getTitle());
-            album.setUrl(dto.getUrl());
-            album.setReleaseDate(dto.getReleaseDate());
-            album.setActive(dto.isActive());
-            album.setNumberOfStreams(0L);
-            album.setLength(LocalTime.of(0,0,0));
-
-            album = albumRepository.save(album);
-
-            creatorClient.createRecordOfMusic(album.getId(), dto.getCreatorIds(), MediaType.ALBUM);
-
-            return AlbumResponseMapper.toDtoWithId(album);
-        }
-
-        Album album = new Album();
-        album.setTitle(dto.getTitle());
-        album.setUrl(dto.getUrl());
-        album.setReleaseDate(dto.getReleaseDate());
-        album.setActive(dto.isActive());
-        album.setNumberOfStreams(0L);
-        album.setLength(LocalTime.of(0,0,0));
-
-        album = albumRepository.save(album);
-
-        // ***
-        int index = 1;
-        for (SongCreateDTO songDto : dto.getSongs()) {
-            if (songDto.getCreatorIds() == null || songDto.getCreatorIds().isEmpty()) {
-                songDto.setCreatorIds(dto.getCreatorIds());
-            }
-
-            songDto.setAlbumId(album.getId());
-            songDto.setTrackIndex(index++);
-
-            songService.createSong(songDto, true);
-        }
-
-        creatorClient.createRecordOfMusic(album.getId(), dto.getCreatorIds(), MediaType.ALBUM);
-
-        return AlbumResponseMapper.toDtoWithId(album);
-    }
-
-    @Override
-    public Album getAlbumEntityById(Long id) {
-        return albumRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Album", "id", id));
+        return isAdmin
+                ? AlbumResponseMapper.toDtoListWithId(albums)
+                : AlbumResponseMapper.toDtoListNoId(albums);
     }
 }
