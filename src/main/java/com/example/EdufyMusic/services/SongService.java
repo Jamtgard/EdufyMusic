@@ -1,7 +1,6 @@
 package com.example.EdufyMusic.services;
 
 import com.example.EdufyMusic.models.DTO.PlayedSongDTO;
-import com.example.EdufyMusic.models.DTO.SongCreateDTO;
 import com.example.EdufyMusic.models.DTO.SongResponseDTO;
 import org.springframework.security.core.Authentication;
 

@@ -8,6 +8,7 @@ import com.example.EdufyMusic.services.AlbumService;
 import com.example.EdufyMusic.services.MusicService;
 import com.example.EdufyMusic.services.SongService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ public class AdminController {
     private final MusicService musicService;
 
     // ED-278-SJ
+    @Autowired
     public AdminController(SongService songService, AlbumService albumService, MusicService musicService)
     {
         this.songService = songService;

@@ -2,25 +2,18 @@ package com.example.EdufyMusic.services;
 
 import com.example.EdufyMusic.clients.CreatorClient;
 import com.example.EdufyMusic.converters.Roles;
-import com.example.EdufyMusic.exceptions.BadRequestException;
 import com.example.EdufyMusic.exceptions.ResourceNotFoundException;
-import com.example.EdufyMusic.models.DTO.AlbumCreateDTO;
 import com.example.EdufyMusic.models.DTO.AlbumResponseDTO;
-import com.example.EdufyMusic.models.DTO.SongCreateDTO;
 import com.example.EdufyMusic.models.DTO.mappers.AlbumResponseMapper;
 import com.example.EdufyMusic.models.entities.Album;
-import com.example.EdufyMusic.models.enums.MediaType;
 import com.example.EdufyMusic.repositories.AlbumRepository;
 import com.example.EdufyMusic.utilities.MicroMethodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 
 // ED-39-SJ
 @Service

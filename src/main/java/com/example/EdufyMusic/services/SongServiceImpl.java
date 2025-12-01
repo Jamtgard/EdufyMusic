@@ -5,13 +5,10 @@ import com.example.EdufyMusic.clients.GenreClient;
 import com.example.EdufyMusic.clients.ThumbClient;
 import com.example.EdufyMusic.clients.UserClient;
 import com.example.EdufyMusic.converters.Roles;
-import com.example.EdufyMusic.exceptions.BadRequestException;
 import com.example.EdufyMusic.exceptions.ResourceNotFoundException;
 import com.example.EdufyMusic.models.DTO.*;
 import com.example.EdufyMusic.models.DTO.mappers.SongResponseMapper;
 import com.example.EdufyMusic.models.DTO.requests.SongsByGenreDTORequest;
-import com.example.EdufyMusic.models.entities.Album;
-import com.example.EdufyMusic.models.entities.AlbumTrack;
 import com.example.EdufyMusic.models.entities.Song;
 import com.example.EdufyMusic.models.enums.MediaType;
 import com.example.EdufyMusic.repositories.AlbumTrackRepository;
@@ -22,8 +19,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
-import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
