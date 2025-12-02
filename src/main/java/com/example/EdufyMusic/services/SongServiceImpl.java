@@ -157,6 +157,10 @@ public class SongServiceImpl implements SongService {
         Song song = songRepository.findByIdAndActiveTrue(songId);
         if (song == null) {throw new ResourceNotFoundException("Song", "id", authentication.getName());}
 
+        if (!song.getUserHistory().containsKey(userDTO.getId())){
+            song.getUserHistory().put(userDTO.getId(), 0L);
+        }
+
         Long currentTimesPlayed = song.getUserHistory().get(userDTO.getId());
         Long increasedTimesPlayed = currentTimesPlayed + 1;
         song.getUserHistory().put(userDTO.getId(), increasedTimesPlayed);
