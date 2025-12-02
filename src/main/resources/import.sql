@@ -128,7 +128,7 @@ VALUES
     ('Midnight Harbor', 'https://music.example.com/song/100', '00:03:33', '2022-04-10', true);
 
 -- Insert ALBUM_TRACKS -------------------------------------------------------------------------------------------------
-INSERT INTO album_tracks (album_id, song_id, track_index)
+INSERT IGNORE INTO album_tracks (album_id, song_id, track_index)
 VALUES
     (1, 1, 1),
     (1, 2, 2),
