@@ -33,6 +33,4 @@ public class ClientController {
     public ResponseEntity<List<SongResponseDTO>> getSongsByGenre(@PathVariable Long genreId) {
         return ResponseEntity.ok(songService.getSongsByGenre(genreId));
     }
-
-
 }

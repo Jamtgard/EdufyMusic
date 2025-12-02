@@ -1,7 +1,7 @@
 package com.example.EdufyMusic.controllers;
 
 import com.example.EdufyMusic.models.DTO.AlbumResponseDTO;
-import com.example.EdufyMusic.models.DTO.MusicResponseDTO;
+import com.example.EdufyMusic.models.records.MusicRecord;
 import com.example.EdufyMusic.models.DTO.SongResponseDTO;
 import com.example.EdufyMusic.services.AlbumService;
 import com.example.EdufyMusic.services.MusicService;
@@ -47,8 +47,7 @@ public class CommonController {
 
     // ED-51-SJ
     @GetMapping("/discography/{creatorId}")
-    public ResponseEntity<MusicResponseDTO> getDiscography(@PathVariable Long creatorId, Authentication authentication){
+    public ResponseEntity<MusicRecord> getDiscography(@PathVariable Long creatorId, Authentication authentication){
         return ResponseEntity.ok(musicService.getDiscography(creatorId, authentication));
     }
-
 }

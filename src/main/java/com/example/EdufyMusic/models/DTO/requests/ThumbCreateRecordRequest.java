@@ -16,7 +16,6 @@ public class ThumbCreateRecordRequest {
         this.mediaName = mediaName;
     }
 
-
     public long getMediaId() {return mediaId;}
     public void setMediaId(long mediaId) {this.mediaId = mediaId;}
 

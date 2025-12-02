@@ -1,6 +1,5 @@
 package com.example.EdufyMusic.models.entities;
 
-
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -98,7 +97,6 @@ public class Song {
         this.releaseDate = song.releaseDate;
         this.albumTracks = song.albumTracks;
         this.userHistory = song.userHistory;
-        // TODO get copy of songs numberOfStreams/timesPlayed
         this.active = song.active;
     }
 

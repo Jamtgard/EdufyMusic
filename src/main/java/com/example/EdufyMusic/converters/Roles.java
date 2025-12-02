@@ -14,7 +14,6 @@ public class Roles {
                 .filter(auth -> auth.startsWith("ROLE_"))
                 .toList()
         );
-
         roles.replaceAll(role -> role.replaceAll("ROLE_", ""));
         return roles;
     }
