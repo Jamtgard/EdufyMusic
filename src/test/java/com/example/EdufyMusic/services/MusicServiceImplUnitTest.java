@@ -7,9 +7,9 @@ import com.example.EdufyMusic.clients.ThumbClient;
 import com.example.EdufyMusic.converters.Roles;
 import com.example.EdufyMusic.exceptions.BadRequestException;
 import com.example.EdufyMusic.exceptions.ResourceNotFoundException;
-import com.example.EdufyMusic.models.DTO.AlbumCreateDTO;
-import com.example.EdufyMusic.models.DTO.MusicResponseDTO;
-import com.example.EdufyMusic.models.DTO.SongCreateDTO;
+import com.example.EdufyMusic.models.DTO.creation.AlbumCreateDTO;
+import com.example.EdufyMusic.models.records.MusicRecord;
+import com.example.EdufyMusic.models.DTO.creation.SongCreateDTO;
 import com.example.EdufyMusic.models.DTO.mappers.CreatorResponseMapper;
 import com.example.EdufyMusic.models.DTO.mappers.GenreResponseMapper;
 import com.example.EdufyMusic.models.DTO.responses.CreatorDTO;
@@ -97,7 +97,7 @@ class MusicServiceImplUnitTest {
             Album album9 = makeAlbum(9L, false);
             when(albumRepository.findAllById(albumIds)).thenReturn(List.of(album8, album9));
 
-            MusicResponseDTO dto = service.getDiscography(creatorId, authentication);
+            MusicRecord dto = service.getDiscography(creatorId, authentication);
 
             assertNotNull(dto);
             assertNotNull(dto.songs());
@@ -131,7 +131,7 @@ class MusicServiceImplUnitTest {
             Album inactiveAlbum = makeAlbum(9L, false);
             when(albumRepository.findAllById(albumIds)).thenReturn(List.of(activeAlbum, inactiveAlbum));
 
-            MusicResponseDTO dto = service.getDiscography(creatorId, authentication);
+            MusicRecord dto = service.getDiscography(creatorId, authentication);
 
             assertNotNull(dto);
             assertEquals(1, dto.songs().size());

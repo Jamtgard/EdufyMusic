@@ -4,7 +4,6 @@ import com.example.EdufyMusic.models.entities.AlbumTrack;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-
 // ED-309-SJ
 @Repository
 public interface AlbumTrackRepository extends JpaRepository<AlbumTrack, Long> {

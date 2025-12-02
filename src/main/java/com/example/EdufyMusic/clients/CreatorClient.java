@@ -15,7 +15,6 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 
-
 import java.util.Arrays;
 import java.util.List;
 

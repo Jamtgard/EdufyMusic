@@ -50,8 +50,6 @@ public class GenreClient {
         }
     }
 
-
-
     // ED-235-SJ
     public boolean createRecordOfSong(Long mediaId, List<Long> genreIds){
         try {

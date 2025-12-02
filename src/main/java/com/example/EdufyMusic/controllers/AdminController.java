@@ -1,8 +1,8 @@
 package com.example.EdufyMusic.controllers;
 
-import com.example.EdufyMusic.models.DTO.AlbumCreateDTO;
+import com.example.EdufyMusic.models.DTO.creation.AlbumCreateDTO;
 import com.example.EdufyMusic.models.DTO.AlbumResponseDTO;
-import com.example.EdufyMusic.models.DTO.SongCreateDTO;
+import com.example.EdufyMusic.models.DTO.creation.SongCreateDTO;
 import com.example.EdufyMusic.models.DTO.SongResponseDTO;
 import com.example.EdufyMusic.services.AlbumService;
 import com.example.EdufyMusic.services.MusicService;
@@ -31,7 +31,6 @@ public class AdminController {
         this.albumService = albumService;
         this.musicService = musicService;
     }
-
 
     // ED-74-SJ
     @GetMapping("/song/{id}")

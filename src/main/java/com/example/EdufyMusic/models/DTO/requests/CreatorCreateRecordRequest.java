@@ -5,7 +5,6 @@ import com.example.EdufyMusic.models.enums.MediaType;
 import java.util.List;
 
 // ED-235-SJ
-// TODO update if necessary due to method not yet created in MS Creator
 public class CreatorCreateRecordRequest {
 
     private Long mediaId;

@@ -1,4 +1,4 @@
-package com.example.EdufyMusic.models.DTO;
+package com.example.EdufyMusic.models.DTO.creation;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;

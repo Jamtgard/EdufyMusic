@@ -6,13 +6,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL) // ED-275-SJ
 public class CreatorDTO {
 
-// Attributes ----------------------------------------------------------------------------------------------------------
-
     private Long id;
     // ED-275-SJ changed attribute name to match response from MS Creator.
     private String username;
-
-// Constructors --------------------------------------------------------------------------------------------------------
 
     public CreatorDTO() {}
 
@@ -22,15 +18,11 @@ public class CreatorDTO {
         this.username = username;
     }
 
-// Getters & Setters ---------------------------------------------------------------------------------------------------
-
     public Long getId() {return id;}
     public void setId(Long id) {this.id = id;}
 
     public String getUsername() {return username;}
     public void setUsername(String username) {this.username = username;}
-
-// toString ------------------------------------------------------------------------------------------------------------
 
     @Override
     public String toString() {

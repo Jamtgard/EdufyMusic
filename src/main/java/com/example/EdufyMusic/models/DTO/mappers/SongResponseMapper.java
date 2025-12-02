@@ -49,10 +49,8 @@ public class SongResponseMapper {
 
         // ED-266-SJ // ED-275-SJ
         dto.setGenres(GenreResponseMapper.getSongGenresForUser(song));
-
         // ED-275-SJ
         dto.setCreators(CreatorResponseMapper.getSongCreatorForUser(song));
-
 
         dto.setAlbumTracks(mapAlbumTracksNoId(song.getAlbumTracks()));
 
@@ -83,7 +81,6 @@ public class SongResponseMapper {
         dto.setId(songId);
         return dto;
     }
-
 
     private static List<AlbumTrackInfoDTO> mapAlbumTracksWithId(List<AlbumTrack> albumTracks) {
 

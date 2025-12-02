@@ -49,5 +49,4 @@ public class UserController {
     public ResponseEntity<PlayedSongDTO> playSong(@PathVariable Long songId, Authentication authentication) {
         return ResponseEntity.ok(songService.playSong(songId, authentication));
     }
-
 }

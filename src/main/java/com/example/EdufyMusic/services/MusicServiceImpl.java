@@ -7,6 +7,8 @@ import com.example.EdufyMusic.converters.Roles;
 import com.example.EdufyMusic.exceptions.BadRequestException;
 import com.example.EdufyMusic.exceptions.ResourceNotFoundException;
 import com.example.EdufyMusic.models.DTO.*;
+import com.example.EdufyMusic.models.DTO.creation.AlbumCreateDTO;
+import com.example.EdufyMusic.models.DTO.creation.SongCreateDTO;
 import com.example.EdufyMusic.models.DTO.mappers.AlbumResponseMapper;
 import com.example.EdufyMusic.models.DTO.mappers.SongResponseMapper;
 import com.example.EdufyMusic.models.entities.Album;
@@ -14,6 +16,7 @@ import com.example.EdufyMusic.models.entities.AlbumTrack;
 import com.example.EdufyMusic.models.entities.Song;
 import com.example.EdufyMusic.models.enums.MediaType;
 import com.example.EdufyMusic.models.records.AlbumResolution;
+import com.example.EdufyMusic.models.records.MusicRecord;
 import com.example.EdufyMusic.repositories.AlbumRepository;
 import com.example.EdufyMusic.repositories.AlbumTrackRepository;
 import com.example.EdufyMusic.repositories.SongRepository;
@@ -63,7 +66,7 @@ public class MusicServiceImpl implements MusicService {
 
     // ED-51-SJ
     @Override
-    public MusicResponseDTO getDiscography(Long creatorId, Authentication authentication) {
+    public MusicRecord getDiscography(Long creatorId, Authentication authentication) {
 
         List<String> roles = Roles.getRoles(authentication);
         boolean isAdmin = roles.contains("music_admin") || roles.contains("edufy_realm_admin");
@@ -100,10 +103,8 @@ public class MusicServiceImpl implements MusicService {
                         : AlbumResponseMapper.toDtoNoId(album))
                 .toList();
 
-        return new MusicResponseDTO(albumDTOs, songDTOs);
+        return new MusicRecord(albumDTOs, songDTOs);
     }
-
-
 
     // ED-309-SJ
     // * Sets up required Album
